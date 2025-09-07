@@ -52,6 +52,19 @@ class GPSMetadata:
 
 
 @dataclass
+class AltitudeEffects:
+    """High altitude effects and performance impact metadata"""
+
+    base_altitude_ft: int = 0
+    max_altitude_ft: int = 0
+    altitude_zone: str = "sea_level"  # sea_level, moderate, high_altitude
+    oxygen_reduction_percent: float = 0.0
+    performance_impact: str = ""
+    acclimatization_needed: bool = False
+    hydration_multiplier: float = 1.0
+
+
+@dataclass
 class CourseProfile:
     """Complete race course profile"""
 
@@ -65,6 +78,9 @@ class CourseProfile:
     technical_sections: List[str]
     surface_types: List[str] = None
     altitude_ft: int = 0
+
+    # Altitude effects metadata
+    altitude_effects: Optional[AltitudeEffects] = None
 
     # GPS-specific fields
     gps_metadata: Optional[GPSMetadata] = None

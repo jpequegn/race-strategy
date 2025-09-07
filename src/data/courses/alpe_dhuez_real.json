@@ -1,0 +1,82 @@
+{
+  "name": "Alpe d'Huez Real Course",
+  "location": "French Alps, France", 
+  "bike_distance_miles": 74.70716713342483,
+  "bike_elevation_gain_ft": 15715,
+  "swim_distance_miles": 1.37,
+  "run_distance_miles": 11.8,
+  "run_elevation_gain_ft": 360,
+  "altitude_ft": 6000,
+  "key_climbs": [
+    {
+      "name": "Early Mountain Pass",
+      "start_mile": 21.384347184104996,
+      "length_miles": 1.1710567060260395,
+      "avg_grade": 12.143889842670392,
+      "max_grade": 47.955344624936934,
+      "elevation_gain_ft": 537
+    },
+    {
+      "name": "Col du Glandon",
+      "start_mile": 54.47982332166712,
+      "length_miles": 2.593959793488395,
+      "avg_grade": 10.029467460658289,
+      "max_grade": 45.40938136811427,
+      "elevation_gain_ft": 867
+    },
+    {
+      "name": "Les Lacets de Montvernier",
+      "start_mile": 65.83895552135974,
+      "length_miles": 0.694991180589156,
+      "avg_grade": 16.3523609245452,
+      "max_grade": 66.8798361078785,
+      "elevation_gain_ft": 377
+    },
+    {
+      "name": "Alpe d'Huez Final Ascent (21 Bends)",
+      "start_mile": 72.04834382949707,
+      "length_miles": 2.1948680820581643,
+      "avg_grade": 12.01000651066363,
+      "max_grade": 65.34985911883537,
+      "elevation_gain_ft": 900
+    }
+  ],
+  "technical_sections": [
+    "21-Bend Alpe d'Huez Final Ascent (mile 72.0): Famous switchback climb to finish line at 1,860m altitude",
+    "Les Lacets de Montvernier (mile 65.8): Steep lacet section with 16.4% average grade",
+    "Col du Glandon approach (mile 54.5): Long 2.6-mile sustained climb at 10% average",
+    "Alpine descent sequence (mile 25-26): Technical descents with grades up to -47.9%",
+    "High-altitude racing effects: Reduced oxygen at 1,800m+ altitude affects performance"
+  ],
+  "surface_types": [
+    "Mountain asphalt",
+    "Some rough sections"
+  ],
+  "race_details": {
+    "swim_venue": "Lac du Verney",
+    "swim_type": "Mountain lake",
+    "wetsuit_legal": true,
+    "typical_water_temp_f": 59,
+    "bike_profile": "Extreme mountain with famous Alpe d'Huez finish",
+    "run_profile": "Three loops at altitude",
+    "run_surface": "Mixed trail and road at 1800m altitude"
+  },
+  "altitude_effects": {
+    "base_altitude_ft": 6000,
+    "max_altitude_ft": 6100,
+    "altitude_zone": "high_altitude",
+    "oxygen_reduction_percent": 15,
+    "performance_impact": "Significant cardiovascular stress, reduced power output, increased recovery time",
+    "acclimatization_needed": true,
+    "hydration_multiplier": 1.3
+  },
+  "data_source": {
+    "type": "GPS Track",
+    "source": "Real GPX file from Alpe d'Huez triathlon course",
+    "gpx_file": "/Users/julienpequegnot/Code/race-strategy/data/alpedhuez_triathlon.gpx",
+    "data_quality_score": 100.0,
+    "total_gps_points": 3274,
+    "parsed_at": "2025-09-07T17:16:09.519103"
+  },
+  "notes": "Real Alpe d'Huez triathlon course featuring the legendary 21-bend final climb. High altitude effects (1800m+) significantly impact performance. Course includes four major mountain passes with technical descents."
+}

@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from ..models.course import CourseProfile, ClimbSegment
+from ..models.course import CourseProfile, ClimbSegment, AltitudeEffects
 
 
 def load_course_from_json(
@@ -58,7 +58,9 @@ def load_course_from_json(
 
     for field in required_fields:
         if field not in course_data:
-            raise ValueError(f"Required field '{field}' missing from course JSON")
+            raise ValueError(
+                f"Required field '{field}' missing from course JSON"
+            )
 
     # Convert key_climbs from dictionaries to ClimbSegment objects
     key_climbs = []
@@ -78,6 +80,26 @@ def load_course_from_json(
             )
             key_climbs.append(climb)
 
+    # Parse altitude_effects if present
+    altitude_effects = None
+    if "altitude_effects" in course_data:
+        altitude_data = course_data["altitude_effects"]
+        altitude_effects = AltitudeEffects(
+            base_altitude_ft=altitude_data.get("base_altitude_ft", 0),
+            max_altitude_ft=altitude_data.get("max_altitude_ft", 0),
+            altitude_zone=altitude_data.get("altitude_zone", "sea_level"),
+            oxygen_reduction_percent=altitude_data.get(
+                "oxygen_reduction_percent", 0.0
+            ),
+            performance_impact=altitude_data.get("performance_impact", ""),
+            acclimatization_needed=altitude_data.get(
+                "acclimatization_needed", False
+            ),
+            hydration_multiplier=altitude_data.get(
+                "hydration_multiplier", 1.0
+            ),
+        )
+
     # Create CourseProfile object
     course_profile = CourseProfile(
         name=course_data["name"],
@@ -88,6 +110,9 @@ def load_course_from_json(
         run_elevation_gain_ft=course_data["run_elevation_gain_ft"],
         key_climbs=key_climbs,
         technical_sections=course_data.get("technical_sections", []),
+        altitude_ft=course_data.get("altitude_ft", 0),
+        surface_types=course_data.get("surface_types", []),
+        altitude_effects=altitude_effects,
         start_coords=course_data.get("start_coords"),
         finish_coords=course_data.get("finish_coords"),
         elevation_profile=course_data.get("elevation_profile", []),
@@ -139,6 +164,11 @@ def load_happy_valley_70_3_gps() -> CourseProfile:
 def load_alpe_dhuez() -> CourseProfile:
     """Load the Alpe d'Huez triathlon course profile"""
     return load_course_from_json("alpedhuez_triathlon")
+
+
+def load_alpe_dhuez_real() -> CourseProfile:
+    """Load Alpe d'Huez real course with 4 major climbs and 21-bend ascent"""
+    return load_course_from_json("alpe_dhuez_real")
 
 
 # Generic loader for any course by name
