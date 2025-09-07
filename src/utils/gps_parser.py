@@ -1,29 +1,60 @@
 # src/utils/gps_parser.py
 import gpxpy
-import numpy as np
 from geopy.distance import geodesic
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from datetime import datetime
 import logging
+from dataclasses import dataclass
 
 from ..models.course import CourseProfile, ClimbSegment, GPSPoint, GPSMetadata
 
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class GPSParserConfig:
+    """Configuration class for GPS parser parameters"""
+
+    min_climb_grade: float = 3.0
+    min_climb_distance: float = 0.5
+    descent_threshold: float = -8.0
+    min_descent_length: float = 0.2
+    smoothing_window: int = 5
+    quality_penalty_factor: float = 50.0
+    descent_continuation_threshold: float = -3.0
+
+
 class GPSParser:
     """GPS data parser for GPX files with climb detection and data validation"""
 
-    def __init__(self, min_climb_grade: float = 3.0, min_climb_distance: float = 0.5):
+    def __init__(
+        self,
+        config: Optional[GPSParserConfig] = None,
+        min_climb_grade: Optional[float] = None,
+        min_climb_distance: Optional[float] = None,
+    ):
         """
-        Initialize GPS parser with climb detection parameters
+        Initialize GPS parser with configuration parameters
 
         Args:
-            min_climb_grade: Minimum grade percentage to consider a climb (default 3%)
-            min_climb_distance: Minimum distance in miles for a climb segment (default 0.5)
+            config: GPSParserConfig instance with all parameters (preferred method)
+            min_climb_grade: Minimum grade percentage to consider a climb (deprecated, use config)
+            min_climb_distance: Minimum distance in miles for a climb segment (deprecated, use config)
         """
-        self.min_climb_grade = min_climb_grade
-        self.min_climb_distance = min_climb_distance
+        # Use provided config or create default config
+        if config is not None:
+            self.config = config
+        else:
+            # Backward compatibility: create config from individual parameters
+            self.config = GPSParserConfig()
+            if min_climb_grade is not None:
+                self.config.min_climb_grade = min_climb_grade
+            if min_climb_distance is not None:
+                self.config.min_climb_distance = min_climb_distance
+
+        # Keep these attributes for backward compatibility
+        self.min_climb_grade = self.config.min_climb_grade
+        self.min_climb_distance = self.config.min_climb_distance
 
     def parse_gpx_file(self, file_path: str) -> CourseProfile:
         """
@@ -137,11 +168,15 @@ class GPSParser:
         return gps_points
 
     def _calculate_gradients(
-        self, gps_points: List[GPSPoint], smoothing_window: int = 5
+        self, gps_points: List[GPSPoint], smoothing_window: Optional[int] = None
     ) -> None:
         """Calculate gradients between GPS points with optional smoothing"""
         if len(gps_points) < 2:
             return
+
+        # Use config smoothing window if not provided
+        if smoothing_window is None:
+            smoothing_window = self.config.smoothing_window
 
         # Smooth elevation data to reduce noise
         elevations = [p.elevation_ft for p in gps_points]
@@ -178,7 +213,6 @@ class GPSParser:
         """Detect climb segments from GPS data"""
         climbs = []
         current_climb = None
-        climb_start_idx = 0
 
         for i, point in enumerate(gps_points):
             if point.gradient_percent is None:
@@ -256,9 +290,9 @@ class GPSParser:
         """Identify technical sections like sharp turns or steep descents"""
         technical_sections = []
 
-        # Look for steep descents (>-8% grade for >0.2 miles)
-        descent_threshold = -8.0
-        min_descent_length = 0.2
+        # Look for steep descents using config parameters
+        descent_threshold = self.config.descent_threshold
+        min_descent_length = self.config.min_descent_length
 
         for i in range(len(gps_points)):
             if (
@@ -268,15 +302,17 @@ class GPSParser:
 
                 # Check if descent continues for minimum length
                 start_mile = gps_points[i].distance_miles
-                j = i
+                j = i + 1
                 while (
-                    j < len(gps_points) - 1
+                    j < len(gps_points)
                     and gps_points[j].gradient_percent
-                    and gps_points[j].gradient_percent <= -3.0
+                    and gps_points[j].gradient_percent
+                    <= self.config.descent_continuation_threshold
                 ):
                     j += 1
 
-                descent_length = gps_points[j - 1].distance_miles - start_mile
+                end_mile = gps_points[j - 1].distance_miles if j > i + 1 else start_mile
+                descent_length = end_mile - start_mile
                 if descent_length >= min_descent_length:
                     technical_sections.append(
                         f"Steep descent at mile {start_mile:.1f} "
@@ -296,8 +332,8 @@ class GPSParser:
         if track_points:
             missing_ratio = missing_elevation / len(track_points)
             quality_score = max(
-                0, 100 - (missing_ratio * 50)
-            )  # Penalize missing elevation
+                0, 100 - (missing_ratio * self.config.quality_penalty_factor)
+            )  # Penalize missing elevation using config factor
 
         # Calculate bounds
         bounds = None
