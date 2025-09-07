@@ -4,7 +4,6 @@ Course data loader for loading course profiles from JSON files
 """
 
 import json
-import os
 from pathlib import Path
 from typing import Optional
 
@@ -146,10 +145,10 @@ def load_alpe_dhuez() -> CourseProfile:
 def load_course(course_name: str) -> CourseProfile:
     """
     Load any available course by name
-    
+
     Args:
         course_name: Name of the course (without .json extension)
-        
+
     Returns:
         CourseProfile object
     """

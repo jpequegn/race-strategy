@@ -42,7 +42,7 @@ class GPSMetadata:
     smoothed: bool = False
     parsed_at: Optional[datetime] = None
     bounds: Optional[Dict[str, float]] = None  # min/max lat/lon
-    
+
     # Coordinate validation results
     invalid_latitude_points: int = 0
     invalid_longitude_points: int = 0

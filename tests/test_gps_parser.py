@@ -357,6 +357,308 @@ class TestGPSParser:
         assert len(technical_sections) > 0
         assert "Steep descent" in technical_sections[0]
 
+    def test_coordinate_validation_config_defaults(self):
+        """Test coordinate validation config has correct default values"""
+        config = GPSParserConfig()
+
+        # Coordinate bounds
+        assert config.min_latitude == -90.0
+        assert config.max_latitude == 90.0
+        assert config.min_longitude == -180.0
+        assert config.max_longitude == 180.0
+
+        # Elevation bounds
+        assert config.min_elevation_ft == -1000.0
+        assert config.max_elevation_ft == 30000.0
+
+        # Distance validation
+        assert config.max_distance_jump_miles == 1.0
+        assert config.coordinate_validation_penalty == 20.0
+
+    def test_invalid_latitude_coordinates(self):
+        """Test detection of invalid latitude coordinates"""
+        invalid_gpx = """<?xml version="1.0"?>
+<gpx version="1.1" creator="Test">
+  <trk>
+    <name>Invalid Latitude Test</name>
+    <trkseg>
+      <trkpt lat="95.0000" lon="-74.0000">
+        <ele>100</ele>
+      </trkpt>
+      <trkpt lat="40.0000" lon="-74.0000">
+        <ele>150</ele>
+      </trkpt>
+      <trkpt lat="-95.0000" lon="-74.0000">
+        <ele>200</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>"""
+        gpx_file = self.create_temp_gpx(invalid_gpx)
+
+        try:
+            course = self.parser.parse_gpx_file(gpx_file)
+
+            # Check validation results in metadata
+            assert course.gps_metadata.invalid_latitude_points == 2
+            assert course.gps_metadata.total_validation_errors >= 2
+            assert course.gps_metadata.data_quality_score < 100
+
+        finally:
+            os.unlink(gpx_file)
+
+    def test_invalid_longitude_coordinates(self):
+        """Test detection of invalid longitude coordinates"""
+        invalid_gpx = """<?xml version="1.0"?>
+<gpx version="1.1" creator="Test">
+  <trk>
+    <name>Invalid Longitude Test</name>
+    <trkseg>
+      <trkpt lat="40.0000" lon="-190.0000">
+        <ele>100</ele>
+      </trkpt>
+      <trkpt lat="40.0010" lon="-74.0000">
+        <ele>150</ele>
+      </trkpt>
+      <trkpt lat="40.0020" lon="185.0000">
+        <ele>200</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>"""
+        gpx_file = self.create_temp_gpx(invalid_gpx)
+
+        try:
+            course = self.parser.parse_gpx_file(gpx_file)
+
+            # Check validation results in metadata
+            assert course.gps_metadata.invalid_longitude_points == 2
+            assert course.gps_metadata.total_validation_errors >= 2
+            assert course.gps_metadata.data_quality_score < 100
+
+        finally:
+            os.unlink(gpx_file)
+
+    def test_invalid_elevation_values(self):
+        """Test detection of invalid elevation values"""
+        invalid_gpx = """<?xml version="1.0"?>
+<gpx version="1.1" creator="Test">
+  <trk>
+    <name>Invalid Elevation Test</name>
+    <trkseg>
+      <trkpt lat="40.0000" lon="-74.0000">
+        <ele>-500</ele>
+      </trkpt>
+      <trkpt lat="40.0010" lon="-74.0000">
+        <ele>10000</ele>
+      </trkpt>
+      <trkpt lat="40.0020" lon="-74.0000">
+        <ele>200</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>"""
+        gpx_file = self.create_temp_gpx(invalid_gpx)
+
+        try:
+            course = self.parser.parse_gpx_file(gpx_file)
+
+            # Check validation results in metadata
+            assert course.gps_metadata.invalid_elevation_points == 2
+            assert course.gps_metadata.total_validation_errors >= 2
+            assert course.gps_metadata.data_quality_score < 100
+
+        finally:
+            os.unlink(gpx_file)
+
+    def test_gps_loss_detection(self):
+        """Test detection of GPS loss (0, 0) coordinates"""
+        gps_loss_gpx = """<?xml version="1.0"?>
+<gpx version="1.1" creator="Test">
+  <trk>
+    <name>GPS Loss Test</name>
+    <trkseg>
+      <trkpt lat="40.0000" lon="-74.0000">
+        <ele>100</ele>
+      </trkpt>
+      <trkpt lat="0.0000" lon="0.0000">
+        <ele>150</ele>
+      </trkpt>
+      <trkpt lat="40.0020" lon="-74.0000">
+        <ele>200</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>"""
+        gpx_file = self.create_temp_gpx(gps_loss_gpx)
+
+        try:
+            course = self.parser.parse_gpx_file(gpx_file)
+
+            # GPS loss should be detected as both invalid latitude and longitude
+            assert course.gps_metadata.invalid_latitude_points >= 1
+            assert course.gps_metadata.invalid_longitude_points >= 1
+            assert course.gps_metadata.total_validation_errors >= 2
+            assert course.gps_metadata.data_quality_score < 100
+
+        finally:
+            os.unlink(gpx_file)
+
+    def test_large_distance_jumps(self):
+        """Test detection of unrealistic distance jumps between points"""
+        # Create GPS data with a large distance jump (> 1 mile default threshold)
+        distance_jump_gpx = """<?xml version="1.0"?>
+<gpx version="1.1" creator="Test">
+  <trk>
+    <name>Distance Jump Test</name>
+    <trkseg>
+      <trkpt lat="40.0000" lon="-74.0000">
+        <ele>100</ele>
+      </trkpt>
+      <trkpt lat="40.0010" lon="-74.0000">
+        <ele>150</ele>
+      </trkpt>
+      <trkpt lat="41.0000" lon="-74.0000">
+        <ele>200</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>"""
+        gpx_file = self.create_temp_gpx(distance_jump_gpx)
+
+        try:
+            course = self.parser.parse_gpx_file(gpx_file)
+
+            # Check for large distance jump detection
+            assert course.gps_metadata.large_distance_jumps >= 1
+            assert course.gps_metadata.total_validation_errors >= 1
+            assert course.gps_metadata.data_quality_score < 100
+
+        finally:
+            os.unlink(gpx_file)
+
+    def test_coordinate_validation_data_quality_scoring(self):
+        """Test data quality score calculation with validation errors"""
+        config = GPSParserConfig(coordinate_validation_penalty=30.0)
+        parser = GPSParser(config=config)
+
+        # Create GPS data with multiple validation errors
+        multi_error_gpx = """<?xml version="1.0"?>
+<gpx version="1.1" creator="Test">
+  <trk>
+    <name>Multiple Errors Test</name>
+    <trkseg>
+      <trkpt lat="40.0000" lon="-74.0000">
+        <ele>100</ele>
+      </trkpt>
+      <trkpt lat="95.0000" lon="185.0000">
+        <ele>50000</ele>
+      </trkpt>
+      <trkpt lat="40.0020" lon="-74.0000">
+        <ele>200</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>"""
+        gpx_file = self.create_temp_gpx(multi_error_gpx)
+
+        try:
+            course = parser.parse_gpx_file(gpx_file)
+
+            # Should have multiple validation errors affecting quality score
+            assert course.gps_metadata.total_validation_errors >= 3
+
+            # With 3 errors out of 3 points and penalty 30.0:
+            # quality reduction = (3/3) * 30.0 = 30.0
+            # So quality score should be around 70.0 or less
+            assert course.gps_metadata.data_quality_score <= 70.0
+
+        finally:
+            os.unlink(gpx_file)
+
+    def test_custom_validation_thresholds(self):
+        """Test coordinate validation with custom thresholds"""
+        config = GPSParserConfig(
+            min_latitude=-45.0,
+            max_latitude=45.0,
+            min_longitude=-90.0,
+            max_longitude=90.0,
+            min_elevation_ft=0.0,
+            max_elevation_ft=10000.0,
+            max_distance_jump_miles=0.5,
+        )
+        parser = GPSParser(config=config)
+
+        # Create GPS data that would be valid with default thresholds but invalid with custom ones
+        custom_threshold_gpx = """<?xml version="1.0"?>
+<gpx version="1.1" creator="Test">
+  <trk>
+    <name>Custom Thresholds Test</name>
+    <trkseg>
+      <trkpt lat="60.0000" lon="-100.0000">
+        <ele>15000</ele>
+      </trkpt>
+      <trkpt lat="40.0000" lon="-74.0000">
+        <ele>5000</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>"""
+        gpx_file = self.create_temp_gpx(custom_threshold_gpx)
+
+        try:
+            course = parser.parse_gpx_file(gpx_file)
+
+            # Should detect validation errors with custom thresholds
+            assert course.gps_metadata.invalid_latitude_points >= 1  # lat 60 > 45
+            assert course.gps_metadata.invalid_longitude_points >= 1  # lon -100 < -90
+            assert (
+                course.gps_metadata.invalid_elevation_points >= 1
+            )  # ele 15000 > 10000
+            assert course.gps_metadata.total_validation_errors >= 3
+
+        finally:
+            os.unlink(gpx_file)
+
+    def test_validation_results_in_metadata(self):
+        """Test that validation results are properly included in GPS metadata"""
+        course = self.parser.parse_gpx_file(
+            self.create_temp_gpx(self.sample_gpx_content)
+        )
+
+        # Valid GPS data should have no validation errors
+        assert hasattr(course.gps_metadata, "invalid_latitude_points")
+        assert hasattr(course.gps_metadata, "invalid_longitude_points")
+        assert hasattr(course.gps_metadata, "invalid_elevation_points")
+        assert hasattr(course.gps_metadata, "large_distance_jumps")
+        assert hasattr(course.gps_metadata, "total_validation_errors")
+
+        # All should be 0 for valid data
+        assert course.gps_metadata.invalid_latitude_points == 0
+        assert course.gps_metadata.invalid_longitude_points == 0
+        assert course.gps_metadata.invalid_elevation_points == 0
+        assert course.gps_metadata.large_distance_jumps == 0
+        assert course.gps_metadata.total_validation_errors == 0
+
+        # Quality score should be 100 for valid data
+        assert course.gps_metadata.data_quality_score == 100.0
+
+    def test_coordinate_bounds_validation(self):
+        """Test individual coordinate bounds validation method"""
+        # Test the _is_coordinate_valid helper method
+        assert self.parser._is_coordinate_valid(45.0, -90.0, 90.0) is True
+        assert self.parser._is_coordinate_valid(-45.0, -90.0, 90.0) is True
+        assert self.parser._is_coordinate_valid(95.0, -90.0, 90.0) is False
+        assert self.parser._is_coordinate_valid(-95.0, -90.0, 90.0) is False
+
+        # Test edge cases
+        assert (
+            self.parser._is_coordinate_valid(90.0, -90.0, 90.0) is True
+        )  # Exactly at boundary
+        assert (
+            self.parser._is_coordinate_valid(-90.0, -90.0, 90.0) is True
+        )  # Exactly at boundary
+
     @pytest.fixture(autouse=True)
     def cleanup_temp_files(self):
         """Clean up any temporary files after tests"""

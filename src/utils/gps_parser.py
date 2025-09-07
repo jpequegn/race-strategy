@@ -1,7 +1,7 @@
 # src/utils/gps_parser.py
 import gpxpy
 from geopy.distance import geodesic
-from typing import List, Optional
+from typing import List, Optional, Dict
 from datetime import datetime
 import logging
 from dataclasses import dataclass
@@ -22,7 +22,7 @@ class GPSParserConfig:
     smoothing_window: int = 5
     quality_penalty_factor: float = 50.0
     descent_continuation_threshold: float = -3.0
-    
+
     # Coordinate validation parameters
     min_latitude: float = -90.0
     max_latitude: float = 90.0
@@ -30,8 +30,12 @@ class GPSParserConfig:
     max_longitude: float = 180.0
     min_elevation_ft: float = -1000.0
     max_elevation_ft: float = 30000.0
-    max_distance_jump_miles: float = 1.0  # Maximum reasonable distance between adjacent points
-    coordinate_validation_penalty: float = 20.0  # Quality score penalty per validation error
+    max_distance_jump_miles: float = (
+        1.0  # Maximum reasonable distance between adjacent points
+    )
+    coordinate_validation_penalty: float = (
+        20.0  # Quality score penalty per validation error
+    )
 
 
 class GPSParser:
@@ -154,14 +158,49 @@ class GPSParser:
             if point.elevation is not None:
                 elevation_ft = point.elevation * 3.28084  # Convert meters to feet
 
-            # Calculate distance from previous point
+            # Calculate distance from previous point (only for valid coordinates)
             if i > 0:
                 prev_point = track_points[i - 1]
-                distance = geodesic(
-                    (prev_point.latitude, prev_point.longitude),
-                    (point.latitude, point.longitude),
-                ).miles
-                total_distance += distance
+
+                # Check if both current and previous coordinates are valid before using geodesic
+                if (
+                    self._is_coordinate_valid(
+                        prev_point.latitude,
+                        self.config.min_latitude,
+                        self.config.max_latitude,
+                    )
+                    and self._is_coordinate_valid(
+                        prev_point.longitude,
+                        self.config.min_longitude,
+                        self.config.max_longitude,
+                    )
+                    and self._is_coordinate_valid(
+                        point.latitude,
+                        self.config.min_latitude,
+                        self.config.max_latitude,
+                    )
+                    and self._is_coordinate_valid(
+                        point.longitude,
+                        self.config.min_longitude,
+                        self.config.max_longitude,
+                    )
+                ):
+
+                    try:
+                        distance = geodesic(
+                            (prev_point.latitude, prev_point.longitude),
+                            (point.latitude, point.longitude),
+                        ).miles
+                        total_distance += distance
+                    except ValueError as e:
+                        # Log error and use a default small distance for invalid points
+                        logger.warning(
+                            f"Distance calculation failed for point {i}: {e}"
+                        )
+                        total_distance += 0.001  # Small default distance
+                else:
+                    # Skip distance calculation for invalid coordinates
+                    total_distance += 0.001  # Small default distance
 
             gps_point = GPSPoint(
                 latitude=point.latitude,
@@ -336,11 +375,11 @@ class GPSParser:
     ) -> Dict[str, int]:
         """
         Validate GPS coordinates and return validation results
-        
+
         Args:
             gps_points: Processed GPS points with calculated distances
             track_points: Original GPX track points
-            
+
         Returns:
             Dictionary with validation error counts
         """
@@ -355,21 +394,29 @@ class GPSParser:
         # Validate individual coordinates
         for i, (gps_point, track_point) in enumerate(zip(gps_points, track_points)):
             point_errors = self._validate_single_point(gps_point, track_point, i)
-            
+
             # Aggregate errors
-            validation_results["invalid_latitude_points"] += point_errors["invalid_latitude"]
-            validation_results["invalid_longitude_points"] += point_errors["invalid_longitude"]
-            validation_results["invalid_elevation_points"] += point_errors["invalid_elevation"]
+            validation_results["invalid_latitude_points"] += point_errors[
+                "invalid_latitude"
+            ]
+            validation_results["invalid_longitude_points"] += point_errors[
+                "invalid_longitude"
+            ]
+            validation_results["invalid_elevation_points"] += point_errors[
+                "invalid_elevation"
+            ]
 
         # Validate distance jumps between adjacent points
-        validation_results["large_distance_jumps"] = self._validate_distance_jumps(gps_points)
+        validation_results["large_distance_jumps"] = self._validate_distance_jumps(
+            gps_points
+        )
 
         # Calculate total errors
         validation_results["total_validation_errors"] = (
-            validation_results["invalid_latitude_points"] +
-            validation_results["invalid_longitude_points"] +
-            validation_results["invalid_elevation_points"] +
-            validation_results["large_distance_jumps"]
+            validation_results["invalid_latitude_points"]
+            + validation_results["invalid_longitude_points"]
+            + validation_results["invalid_elevation_points"]
+            + validation_results["large_distance_jumps"]
         )
 
         return validation_results
@@ -379,12 +426,12 @@ class GPSParser:
     ) -> Dict[str, int]:
         """
         Validate a single GPS point
-        
+
         Args:
             gps_point: Processed GPS point
             track_point: Original GPX track point
             point_index: Index of the point for logging
-            
+
         Returns:
             Dictionary with error flags for this point
         """
@@ -392,9 +439,7 @@ class GPSParser:
 
         # Validate latitude
         if not self._is_coordinate_valid(
-            gps_point.latitude, 
-            self.config.min_latitude, 
-            self.config.max_latitude
+            gps_point.latitude, self.config.min_latitude, self.config.max_latitude
         ):
             errors["invalid_latitude"] = 1
             logger.warning(
@@ -404,9 +449,7 @@ class GPSParser:
 
         # Validate longitude
         if not self._is_coordinate_valid(
-            gps_point.longitude, 
-            self.config.min_longitude, 
-            self.config.max_longitude
+            gps_point.longitude, self.config.min_longitude, self.config.max_longitude
         ):
             errors["invalid_longitude"] = 1
             logger.warning(
@@ -416,9 +459,9 @@ class GPSParser:
 
         # Validate elevation (only if elevation data exists)
         if track_point.elevation is not None and not self._is_coordinate_valid(
-            gps_point.elevation_ft, 
-            self.config.min_elevation_ft, 
-            self.config.max_elevation_ft
+            gps_point.elevation_ft,
+            self.config.min_elevation_ft,
+            self.config.max_elevation_ft,
         ):
             errors["invalid_elevation"] = 1
             logger.warning(
@@ -427,28 +470,32 @@ class GPSParser:
             )
 
         # Special case: Check for (0, 0) coordinates indicating GPS loss
-        if (abs(gps_point.latitude) < 0.0001 and abs(gps_point.longitude) < 0.0001):
+        if abs(gps_point.latitude) < 0.0001 and abs(gps_point.longitude) < 0.0001:
             errors["invalid_latitude"] = 1
             errors["invalid_longitude"] = 1
-            logger.warning(f"GPS loss detected at point {point_index}: coordinates (0, 0)")
+            logger.warning(
+                f"GPS loss detected at point {point_index}: coordinates (0, 0)"
+            )
 
         return errors
 
     def _validate_distance_jumps(self, gps_points: List[GPSPoint]) -> int:
         """
         Validate distance jumps between adjacent GPS points
-        
+
         Args:
             gps_points: List of GPS points with calculated distances
-            
+
         Returns:
             Number of large distance jumps detected
         """
         large_jumps = 0
 
         for i in range(1, len(gps_points)):
-            distance_diff = gps_points[i].distance_miles - gps_points[i - 1].distance_miles
-            
+            distance_diff = (
+                gps_points[i].distance_miles - gps_points[i - 1].distance_miles
+            )
+
             if distance_diff > self.config.max_distance_jump_miles:
                 large_jumps += 1
                 logger.warning(
@@ -458,15 +505,17 @@ class GPSParser:
 
         return large_jumps
 
-    def _is_coordinate_valid(self, value: float, min_val: float, max_val: float) -> bool:
+    def _is_coordinate_valid(
+        self, value: float, min_val: float, max_val: float
+    ) -> bool:
         """
         Check if a coordinate value is within valid bounds
-        
+
         Args:
             value: Value to validate
             min_val: Minimum valid value
             max_val: Maximum valid value
-            
+
         Returns:
             True if valid, False otherwise
         """
@@ -487,12 +536,16 @@ class GPSParser:
             # Penalize for missing elevation data
             missing_ratio = missing_elevation / len(track_points)
             quality_score -= missing_ratio * self.config.quality_penalty_factor
-            
+
             # Penalize for coordinate validation errors
             if validation_results["total_validation_errors"] > 0:
-                validation_ratio = validation_results["total_validation_errors"] / len(track_points)
-                quality_score -= validation_ratio * self.config.coordinate_validation_penalty
-                
+                validation_ratio = validation_results["total_validation_errors"] / len(
+                    track_points
+                )
+                quality_score -= (
+                    validation_ratio * self.config.coordinate_validation_penalty
+                )
+
             # Ensure score doesn't go below 0
             quality_score = max(0, quality_score)
 
