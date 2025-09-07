@@ -128,10 +128,29 @@ def get_available_courses(data_dir: Optional[str] = None) -> list[str]:
 
 # Predefined course loaders for convenience
 def load_happy_valley_70_3() -> CourseProfile:
-    """Load the Happy Valley 70.3 course profile"""
+    """Load the Happy Valley 70.3 course profile (research-based)"""
     return load_course_from_json("happy_valley_70_3_real")
 
 
+def load_happy_valley_70_3_gps() -> CourseProfile:
+    """Load the Happy Valley 70.3 course profile (GPS-based)"""
+    return load_course_from_json("im70.3_pennstate")
+
+
 def load_alpe_dhuez() -> CourseProfile:
-    """Load the Alpe d'Huez triathlon course profile (if available)"""
-    return load_course_from_json("alpe_dhuez")
+    """Load the Alpe d'Huez triathlon course profile"""
+    return load_course_from_json("alpedhuez_triathlon")
+
+
+# Generic loader for any course by name
+def load_course(course_name: str) -> CourseProfile:
+    """
+    Load any available course by name
+    
+    Args:
+        course_name: Name of the course (without .json extension)
+        
+    Returns:
+        CourseProfile object
+    """
+    return load_course_from_json(course_name)

@@ -1,0 +1,135 @@
+{
+  "name": "Ironman 70.3 Happy Valley (GPS)",
+  "location": "Pennsylvania, USA",
+  "bike_distance_miles": 56.1050520000411,
+  "bike_elevation_gain_ft": 5062,
+  "swim_distance_miles": 1.2,
+  "run_distance_miles": 13.1,
+  "run_elevation_gain_ft": 206,
+  "altitude_ft": 1200,
+  "key_climbs": [
+    {
+      "name": "Climb at mile 2.7",
+      "start_mile": 2.6910437533104794,
+      "length_miles": 0.5639571065270874,
+      "avg_grade": 4.537069293492417,
+      "max_grade": 30.868374344304616,
+      "elevation_gain_ft": 61
+    },
+    {
+      "name": "Climb at mile 25.9",
+      "start_mile": 25.864207758005612,
+      "length_miles": 0.5104650290184658,
+      "avg_grade": 4.292840058848971,
+      "max_grade": 31.818365378677516,
+      "elevation_gain_ft": 64
+    },
+    {
+      "name": "Climb at mile 26.9",
+      "start_mile": 26.851678511277893,
+      "length_miles": 0.5472909738482912,
+      "avg_grade": 5.787253166547017,
+      "max_grade": 61.23166977597438,
+      "elevation_gain_ft": 85
+    },
+    {
+      "name": "Climb at mile 27.4",
+      "start_mile": 27.427233868517565,
+      "length_miles": 0.5710063366117737,
+      "avg_grade": 10.503930707892803,
+      "max_grade": 76.04036828202224,
+      "elevation_gain_ft": 199
+    },
+    {
+      "name": "Climb at mile 30.9",
+      "start_mile": 30.927276554383237,
+      "length_miles": 0.6683649848428779,
+      "avg_grade": 3.0255502880467384,
+      "max_grade": 13.724657328585558,
+      "elevation_gain_ft": 63
+    },
+    {
+      "name": "Climb at mile 35.9",
+      "start_mile": 35.93421012829664,
+      "length_miles": 0.7461448203780137,
+      "avg_grade": 7.161175345435171,
+      "max_grade": 39.24445319227348,
+      "elevation_gain_ft": 115
+    },
+    {
+      "name": "Climb at mile 38.3",
+      "start_mile": 38.2660178802945,
+      "length_miles": 1.380033452606284,
+      "avg_grade": 10.852908143022603,
+      "max_grade": 223.76903785519778,
+      "elevation_gain_ft": 374
+    },
+    {
+      "name": "Climb at mile 40.1",
+      "start_mile": 40.050222892974105,
+      "length_miles": 1.0295954445153654,
+      "avg_grade": 11.023381725686026,
+      "max_grade": 115.81227481709189,
+      "elevation_gain_ft": 321
+    }
+  ],
+  "technical_sections": [
+    "Steep descent at mile 28.0 (0.4mi, -26.4% grade)",
+    "Steep descent at mile 28.0 (0.4mi, -8.5% grade)",
+    "Steep descent at mile 28.1 (0.3mi, -49.7% grade)",
+    "Steep descent at mile 28.1 (0.3mi, -34.4% grade)",
+    "Steep descent at mile 28.1 (0.3mi, -27.3% grade)",
+    "Steep descent at mile 28.1 (0.3mi, -8.1% grade)",
+    "Steep descent at mile 28.1 (0.3mi, -13.1% grade)",
+    "Steep descent at mile 28.1 (0.3mi, -12.8% grade)",
+    "Steep descent at mile 28.1 (0.3mi, -13.1% grade)",
+    "Steep descent at mile 28.2 (0.2mi, -14.8% grade)",
+    "Steep descent at mile 28.2 (0.2mi, -15.4% grade)",
+    "Steep descent at mile 28.2 (0.2mi, -11.5% grade)",
+    "Steep descent at mile 41.1 (0.3mi, -12.9% grade)",
+    "Steep descent at mile 41.1 (0.3mi, -13.5% grade)",
+    "Steep descent at mile 41.1 (0.2mi, -34.8% grade)",
+    "Steep descent at mile 41.1 (0.2mi, -9.5% grade)",
+    "Steep descent at mile 41.1 (0.2mi, -18.7% grade)",
+    "Steep descent at mile 41.1 (0.2mi, -22.2% grade)",
+    "Steep descent at mile 41.1 (0.2mi, -8.3% grade)",
+    "Steep descent at mile 41.5 (0.2mi, -41.6% grade)",
+    "Steep descent at mile 41.5 (0.2mi, -12.7% grade)",
+    "Steep descent at mile 41.5 (0.2mi, -38.6% grade)",
+    "Steep descent at mile 41.5 (0.2mi, -22.7% grade)",
+    "Steep descent at mile 41.8 (0.5mi, -9.5% grade)",
+    "Steep descent at mile 41.8 (0.4mi, -16.3% grade)",
+    "Steep descent at mile 41.8 (0.4mi, -11.0% grade)",
+    "Steep descent at mile 41.8 (0.4mi, -14.3% grade)",
+    "Steep descent at mile 41.8 (0.4mi, -12.6% grade)",
+    "Steep descent at mile 42.0 (0.3mi, -9.5% grade)",
+    "Steep descent at mile 42.0 (0.3mi, -9.5% grade)",
+    "Steep descent at mile 42.0 (0.3mi, -19.2% grade)",
+    "Steep descent at mile 42.0 (0.2mi, -12.3% grade)",
+    "Steep descent at mile 42.0 (0.2mi, -14.9% grade)",
+    "Steep descent at mile 42.0 (0.2mi, -9.1% grade)",
+    "Steep descent at mile 42.0 (0.2mi, -15.8% grade)"
+  ],
+  "surface_types": [
+    "Asphalt",
+    "Some rough road sections"
+  ],
+  "race_details": {
+    "swim_venue": "Foster Joseph Sayers Lake",
+    "swim_type": "Lake swim",
+    "wetsuit_legal": true,
+    "typical_water_temp_f": 68,
+    "bike_profile": "Rolling to hilly with major climbs",
+    "run_profile": "Two loops with hills",
+    "run_surface": "Mixed road and wide pedestrian paths"
+  },
+  "data_source": {
+    "type": "GPS Track",
+    "source": "Local GPX file",
+    "gpx_file": "/Users/julienpequegnot/Code/race-strategy/data/im70.3_pennstate.gpx",
+    "data_quality_score": 100.0,
+    "total_gps_points": 3722,
+    "parsed_at": "2025-09-07T17:16:09.309247"
+  },
+  "notes": "Point-to-point course with dual transitions"
+}
