@@ -10,14 +10,15 @@ def setup_dspy_model():
     
     if provider == "openai":
         model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
-        lm = dspy.OpenAI(model=model, max_tokens=1000)
+        # In DSPy 3.x, use dspy.LM with provider prefix
+        lm = dspy.LM(model=f"openai/{model}", max_tokens=1000)
     elif provider == "anthropic":
         model = os.getenv("ANTHROPIC_MODEL", "claude-3-sonnet-20240229")
-        lm = dspy.Claude(model=model)
+        lm = dspy.LM(model=f"anthropic/{model}", max_tokens=1000)
     elif provider == "together":
-        lm = dspy.Together(model="mistralai/Mistral-7B-Instruct-v0.1")
+        lm = dspy.LM(model="together_ai/mistralai/Mistral-7B-Instruct-v0.1", max_tokens=1000)
     else:
         raise ValueError(f"Unsupported LM provider: {provider}")
     
-    dspy.settings.configure(lm=lm)
+    dspy.configure(lm=lm)
     return lm
