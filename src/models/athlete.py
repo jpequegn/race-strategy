@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
+
 @dataclass
 class AthleteProfile:
     """Individual athlete capabilities and goals"""
+
     name: str
     ftp_watts: int
     swim_pace_per_100m: float  # seconds
