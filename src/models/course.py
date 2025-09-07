@@ -42,6 +42,13 @@ class GPSMetadata:
     smoothed: bool = False
     parsed_at: Optional[datetime] = None
     bounds: Optional[Dict[str, float]] = None  # min/max lat/lon
+    
+    # Coordinate validation results
+    invalid_latitude_points: int = 0
+    invalid_longitude_points: int = 0
+    invalid_elevation_points: int = 0
+    large_distance_jumps: int = 0
+    total_validation_errors: int = 0
 
 
 @dataclass
