@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from ..models.course import CourseProfile, ClimbSegment, AltitudeEffects
+from ..models.course import AltitudeEffects, ClimbSegment, CourseProfile
 
 
 def load_course_from_json(
@@ -41,7 +41,7 @@ def load_course_from_json(
         raise FileNotFoundError(f"Course JSON file not found: {json_path}")
 
     try:
-        with open(json_path, "r", encoding="utf-8") as f:
+        with open(json_path, encoding="utf-8") as f:
             course_data = json.load(f)
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in course file {json_path}: {e}")

@@ -14,18 +14,18 @@ Dependencies:
     - src.models.course
 """
 
+import math
 import sys
 from pathlib import Path
-from typing import List, Dict, Any
-import math
+from typing import Any, Dict, List
 
 # Add src directory to path for imports
 current_dir = Path(__file__).parent
 project_root = current_dir.parent
 sys.path.insert(0, str(project_root))
 
-from src.utils.gps_parser import GPSParser, GPSParserConfig
 from src.models.course import ClimbSegment
+from src.utils.gps_parser import GPSParser, GPSParserConfig
 
 
 def main():

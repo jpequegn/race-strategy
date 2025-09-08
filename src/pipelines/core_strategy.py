@@ -1,15 +1,17 @@
+from typing import Any, Dict, List
+
 import dspy
-from typing import Dict, Any, List
-from ..models.course import CourseProfile
+
 from ..models.athlete import AthleteProfile
 from ..models.conditions import RaceConditions
+from ..models.course import CourseProfile
 from ..utils.course_analyzer import DifficultyCalculator
 from .signatures import (
-    EnhancedCourseAnalyzer,
-    SegmentAnalyzer,
     AthleteAssessment,
+    EnhancedCourseAnalyzer,
     PacingStrategy,
     RiskAssessment,
+    SegmentAnalyzer,
     StrategyOptimizer,
 )
 

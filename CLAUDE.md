@@ -33,11 +33,13 @@ python -m src.pipelines.core_strategy  # If you add a main block
 
 ### Code Quality
 ```bash
-# Format code with Black
-black src/ tests/ examples/
+# Format and lint with Ruff (replaces Black + flake8)
+ruff format src/ tests/ examples/       # Format code
+ruff check src/ tests/ examples/        # Lint code
+ruff check --fix src/ tests/ examples/  # Auto-fix issues
 
-# Lint with flake8
-flake8 src/ tests/ examples/
+# Or run both together
+ruff format . && ruff check --fix .
 
 # Run tests
 pytest tests/

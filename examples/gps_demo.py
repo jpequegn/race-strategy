@@ -21,8 +21,8 @@ current_dir = Path(__file__).parent
 project_root = current_dir.parent
 sys.path.insert(0, str(project_root))
 
-from src.utils.gps_parser import GPSParser, GPSParserConfig
 from src.models.course import CourseProfile
+from src.utils.gps_parser import GPSParser, GPSParserConfig
 
 
 def main():

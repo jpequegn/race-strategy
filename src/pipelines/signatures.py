@@ -1,5 +1,5 @@
+
 import dspy
-from typing import List, Dict
 
 
 class EnhancedCourseAnalyzer(dspy.Signature):
