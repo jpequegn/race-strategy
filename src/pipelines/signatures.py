@@ -1,4 +1,3 @@
-
 import dspy
 
 
@@ -117,6 +116,42 @@ class RiskAssessment(dspy.Signature):
     )
 
 
+class NutritionStrategy(dspy.Signature):
+    """Generate comprehensive race nutrition plan based on physiology and conditions"""
+
+    athlete_profile: str = dspy.InputField(
+        desc="Weight, experience, nutrition preferences, and race history"
+    )
+    race_duration: str = dspy.InputField(
+        desc="Predicted race time and effort distribution across disciplines"
+    )
+    conditions: str = dspy.InputField(
+        desc="Temperature, humidity, race logistics and aid station availability"
+    )
+    nutrition_calculations: str = dspy.InputField(
+        desc="Calculated sweat rate, carb needs, and sodium requirements per hour"
+    )
+    pacing_strategy: str = dspy.InputField(
+        desc="Race pacing plan to optimize nutrition timing"
+    )
+
+    hydration_plan: str = dspy.OutputField(
+        desc="Hour-by-hour fluid intake with specific amounts and products"
+    )
+    fueling_schedule: str = dspy.OutputField(
+        desc="Carbohydrate and calorie timing throughout race with specific products"
+    )
+    electrolyte_strategy: str = dspy.OutputField(
+        desc="Sodium and mineral replacement plan with timing and products"
+    )
+    contingency_nutrition: str = dspy.OutputField(
+        desc="Backup plan if primary strategy fails, including GI distress protocol"
+    )
+    integration_guidance: str = dspy.OutputField(
+        desc="How nutrition timing integrates with pacing and course demands"
+    )
+
+
 class StrategyOptimizer(dspy.Signature):
     """Synthesize all analysis into final race strategy with time predictions"""
 
@@ -124,6 +159,7 @@ class StrategyOptimizer(dspy.Signature):
     athlete_assessment: str = dspy.InputField()
     pacing_strategy: str = dspy.InputField()
     risk_assessment: str = dspy.InputField()
+    nutrition_strategy: str = dspy.InputField(desc="Hydration and fueling plan")
     target_time: str = dspy.InputField(desc="Athlete's target finish time")
 
     final_strategy: str = dspy.OutputField(desc="Complete race execution plan")

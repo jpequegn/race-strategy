@@ -6,9 +6,11 @@ from ..models.athlete import AthleteProfile
 from ..models.conditions import RaceConditions
 from ..models.course import CourseProfile
 from ..utils.course_analyzer import DifficultyCalculator
+from ..utils.nutrition_calculator import NutritionCalculator
 from .signatures import (
     AthleteAssessment,
     EnhancedCourseAnalyzer,
+    NutritionStrategy,
     PacingStrategy,
     RiskAssessment,
     SegmentAnalyzer,
@@ -21,10 +23,12 @@ class RaceStrategyPipeline:
 
     def __init__(self):
         self.difficulty_calculator = DifficultyCalculator()
+        self.nutrition_calculator = NutritionCalculator()
         self.enhanced_course_analyzer = dspy.ChainOfThought(EnhancedCourseAnalyzer)
         self.segment_analyzer = dspy.ChainOfThought(SegmentAnalyzer)
         self.athlete_assessor = dspy.ChainOfThought(AthleteAssessment)
         self.pacing_strategist = dspy.ChainOfThought(PacingStrategy)
+        self.nutrition_strategist = dspy.ChainOfThought(NutritionStrategy)
         self.risk_assessor = dspy.ChainOfThought(RiskAssessment)
         self.strategy_optimizer = dspy.ChainOfThought(StrategyOptimizer)
 
@@ -79,23 +83,44 @@ class RaceStrategyPipeline:
             race_conditions=self._format_conditions_data(conditions),
         )
 
-        # Step 6: Assess risks with enhanced analysis
+        # Step 6: Generate nutrition strategy with calculations and pacing integration
+        race_duration_hours = self._estimate_race_duration(athlete, difficulty_metrics)
+        nutrition_calculations = self._calculate_nutrition_requirements(
+            athlete, conditions, race_duration_hours
+        )
+
+        nutrition_strategy = self.nutrition_strategist(
+            athlete_profile=self._format_athlete_nutrition_profile(athlete),
+            race_duration=f"{race_duration_hours:.1f} hours - {athlete.target_finish_time or 'Sub 6:00:00'}",
+            conditions=self._format_nutrition_conditions(conditions),
+            nutrition_calculations=nutrition_calculations,
+            pacing_strategy=f"Swim: {pacing_strategy.swim_strategy}\n"
+            f"Bike: {pacing_strategy.bike_strategy}\n"
+            f"Run: {pacing_strategy.run_strategy}",
+        )
+
+        # Step 7: Assess risks with enhanced analysis and nutrition considerations
         risk_assessment = self.risk_assessor(
             pacing_strategy=f"Swim: {pacing_strategy.swim_strategy}\n"
             f"Bike: {pacing_strategy.bike_strategy}\n"
             f"Run: {pacing_strategy.run_strategy}\n"
+            f"Nutrition: {nutrition_strategy.hydration_plan}\n"
             f"Course Difficulty: {difficulty_metrics.overall_rating}/10\n"
             f"Key Challenges: {enhanced_course_analysis.tactical_insights}",
             race_conditions=self._format_conditions_data(conditions),
         )
 
-        # Step 7: Optimize final strategy with all enhanced data
+        # Step 8: Optimize final strategy with all enhanced data including nutrition
         final_strategy = self.strategy_optimizer(
             course_analysis=enhanced_course_analysis.strategic_analysis,
             athlete_assessment=athlete_assessment.strengths_vs_course,
             pacing_strategy=f"Swim: {pacing_strategy.swim_strategy}\n"
             f"Bike: {pacing_strategy.bike_strategy}\n"
             f"Run: {pacing_strategy.run_strategy}",
+            nutrition_strategy=f"Hydration: {nutrition_strategy.hydration_plan}\n"
+            f"Fueling: {nutrition_strategy.fueling_schedule}\n"
+            f"Electrolytes: {nutrition_strategy.electrolyte_strategy}\n"
+            f"Integration: {nutrition_strategy.integration_guidance}",
             risk_assessment=risk_assessment.mitigation_plan,
             target_time=athlete.target_finish_time or "Sub 6:00:00",
         )
@@ -106,6 +131,7 @@ class RaceStrategyPipeline:
             "segment_analyses": segment_analyses,
             "athlete_assessment": athlete_assessment,
             "pacing_strategy": pacing_strategy,
+            "nutrition_strategy": nutrition_strategy,
             "risk_assessment": risk_assessment,
             "final_strategy": final_strategy,
         }
@@ -279,4 +305,115 @@ Experience Level: {athlete.experience_level}
 Relevant Strengths: {", ".join([s for s in athlete.strengths if s in ["bike", "climbing", "power"]])}
 Relevant Limiters: {", ".join([l for l in athlete.limiters if l in ["bike", "climbing", "hills", "endurance"]])}
 Segment Challenge Level: {"High" if segment["difficulty_score"] > 0.7 else "Moderate" if segment["difficulty_score"] > 0.4 else "Manageable"}
+"""
+
+    def _estimate_race_duration(
+        self, athlete: AthleteProfile, difficulty_metrics
+    ) -> float:
+        """Estimate race duration in hours based on athlete profile and course difficulty"""
+        if athlete.target_finish_time:
+            # Parse target time (format: "H:MM:SS" or "HH:MM:SS")
+            time_parts = athlete.target_finish_time.split(":")
+            if len(time_parts) == 3:
+                hours = float(time_parts[0])
+                minutes = float(time_parts[1])
+                seconds = float(time_parts[2])
+                return hours + (minutes / 60.0) + (seconds / 3600.0)
+
+        # Estimate based on experience level and course difficulty
+        base_hours = 5.5  # Average 70.3 time
+
+        if athlete.experience_level == "beginner":
+            base_hours += 1.0
+        elif athlete.experience_level == "advanced":
+            base_hours -= 0.5
+
+        # Adjust for course difficulty
+        difficulty_adjustment = (difficulty_metrics.overall_rating - 5.0) * 0.2
+        base_hours += difficulty_adjustment
+
+        return max(base_hours, 4.0)  # Minimum 4 hours
+
+    def _calculate_nutrition_requirements(
+        self,
+        athlete: AthleteProfile,
+        conditions: RaceConditions,
+        race_duration_hours: float,
+    ) -> str:
+        """Calculate nutrition requirements using NutritionCalculator"""
+        calc = self.nutrition_calculator
+
+        # Calculate sweat rate
+        sweat_rate = calc.calculate_sweat_rate(athlete, conditions)
+
+        # Calculate carbohydrate needs
+        intensity = "moderate"  # Could be adjusted based on target time vs ability
+        carbs_per_hour = calc.calculate_carb_needs(race_duration_hours, intensity)
+
+        # Calculate sodium needs
+        sodium_per_hour = calc.calculate_sodium_needs(sweat_rate, conditions, athlete)
+
+        # Calculate fluid replacement
+        fluid_per_hour, replacement_pct = calc.calculate_fluid_replacement(sweat_rate)
+
+        # Generate hourly schedule
+        schedule = calc.generate_hourly_schedule(
+            race_duration_hours, carbs_per_hour, fluid_per_hour, sodium_per_hour
+        )
+
+        # Assess environmental risks
+        env_risks = calc.assess_environmental_risk(conditions)
+
+        return f"""
+Calculated Nutrition Requirements:
+• Sweat Rate: {sweat_rate:.1f} oz/hour
+• Fluid Replacement: {fluid_per_hour} oz/hour ({replacement_pct:.0f}% of sweat loss)
+• Carbohydrate Target: {carbs_per_hour}g/hour
+• Sodium Target: {sodium_per_hour}mg/hour
+
+Hourly Schedule:
+• Carbs by hour: {schedule['carbs']}
+• Fluids by hour: {schedule['fluids']} oz
+• Sodium by hour: {schedule['sodium']} mg
+
+Environmental Considerations:
+• Heat Risk: {env_risks.get('heat', 'Not assessed')}
+• Humidity Impact: {env_risks.get('humidity', 'Not assessed')}
+{f"• Cold Weather: {env_risks['cold']}" if 'cold' in env_risks else ''}
+"""
+
+    def _format_athlete_nutrition_profile(self, athlete: AthleteProfile) -> str:
+        """Format athlete profile specifically for nutrition planning"""
+        return f"""
+Athlete: {athlete.name}
+Weight: {athlete.weight_lbs} lbs
+Experience Level: {athlete.experience_level}
+Previous 70.3 Time: {athlete.previous_70_3_time or 'First time'}
+Known Strengths: {', '.join(athlete.strengths)}
+Known Limiters: {', '.join(athlete.limiters)}
+Target Finish Time: {athlete.target_finish_time or 'Sub 6:00:00'}
+
+Nutrition Considerations:
+• Body weight crucial for sweat rate calculations
+• Experience level affects gut training and tolerance
+• Previous race experience indicates proven strategies
+• Limiters may affect nutrition timing (e.g., GI issues, heat sensitivity)
+"""
+
+    def _format_nutrition_conditions(self, conditions: RaceConditions) -> str:
+        """Format race conditions specifically for nutrition planning"""
+        return f"""
+Environmental Conditions:
+• Temperature: {conditions.temperature_f}°F
+• Humidity: {conditions.humidity_percent}%
+• Wind: {conditions.wind_speed_mph} mph {conditions.wind_direction}
+• Precipitation: {conditions.precipitation}
+• Cloud Cover: {conditions.cloud_cover}
+
+Nutrition Impact:
+• Heat stress level affects sweat rate and fluid needs
+• Humidity impairs evaporative cooling, increasing fluid requirements
+• Wind conditions affect cooling and may increase caloric needs
+• Rain/wet conditions may limit access to personal nutrition
+• Aid station logistics affected by weather conditions
 """
