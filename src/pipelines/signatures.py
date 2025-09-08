@@ -1,20 +1,69 @@
 import dspy
+from typing import List, Dict
 
 
-class CourseAnalyzer(dspy.Signature):
-    """Analyze race course characteristics and identify key strategic points"""
+class EnhancedCourseAnalyzer(dspy.Signature):
+    """Advanced course analysis using real GPS data and difficulty calculations"""
 
+    # Course data inputs
+    course_name: str = dspy.InputField(desc="Name of the race course")
     course_profile: str = dspy.InputField(
-        desc="Detailed course elevation and technical data"
+        desc="Detailed course profile with distances and elevation gains"
     )
-    analysis: str = dspy.OutputField(
-        desc="Strategic analysis of course challenges and opportunities"
+    elevation_data: str = dspy.InputField(
+        desc="Real GPS elevation profile with mile-by-mile gradients"
     )
-    key_segments: str = dspy.OutputField(
-        desc="List of 3-5 most critical course segments for strategy"
+
+    # Difficulty metrics from DifficultyCalculator
+    difficulty_metrics: str = dspy.InputField(
+        desc="Objective difficulty metrics: overall rating, elevation intensity, gradient stats"
     )
-    difficulty_rating: str = dspy.OutputField(
-        desc="Overall difficulty rating (1-10) with justification"
+    crux_segments: str = dspy.InputField(
+        desc="Most challenging segments identified by difficulty calculator"
+    )
+
+    # Strategic outputs
+    strategic_analysis: str = dspy.OutputField(
+        desc="Comprehensive strategic analysis based on real elevation data and difficulty metrics"
+    )
+    segment_analysis: str = dspy.OutputField(
+        desc="Mile-by-mile strategic breakdown with specific power/effort recommendations"
+    )
+    power_pacing_plan: str = dspy.OutputField(
+        desc="Detailed power targets and pacing strategy for each major segment"
+    )
+    tactical_insights: str = dspy.OutputField(
+        desc="Race-winning tactical recommendations based on course characteristics"
+    )
+    difficulty_justification: str = dspy.OutputField(
+        desc="Explanation of difficulty rating with specific challenges and opportunities"
+    )
+
+
+class SegmentAnalyzer(dspy.Signature):
+    """Analyze individual course segments for detailed tactical recommendations"""
+
+    segment_data: str = dspy.InputField(
+        desc="Specific segment details: distance, elevation profile, gradient changes"
+    )
+    segment_position: str = dspy.InputField(
+        desc="Segment position in race context (early/mid/late) and surrounding segments"
+    )
+    athlete_context: str = dspy.InputField(
+        desc="Athlete's relevant capabilities and fatigue state at this point in race"
+    )
+
+    power_recommendation: str = dspy.OutputField(
+        desc="Specific power target range and effort distribution for this segment"
+    )
+    tactical_approach: str = dspy.OutputField(
+        desc="Optimal tactical approach: when to attack, recover, or maintain steady state"
+    )
+    risk_mitigation: str = dspy.OutputField(
+        desc="Segment-specific risks and how to minimize them"
+    )
+    success_metrics: str = dspy.OutputField(
+        desc="Key performance indicators to track success through this segment"
     )
 
 
