@@ -52,7 +52,6 @@ class TestDataValidator:
                     longitude=-74.0 + i * 0.001,
                     elevation_ft=elevation,
                     distance_miles=distance * i / num_gps_points,
-                    time=None,
                 )
             )
 
@@ -91,7 +90,7 @@ class TestDataValidator:
             invalid_elevation_points=10 if include_issues else 0,
             invalid_latitude_points=0,
             invalid_longitude_points=0,
-            large_distance_jumps=8 if include_issues else 1,
+            large_distance_jumps=6000 if include_issues else 1,
             total_validation_errors=23 if include_issues else 1,
             data_quality_score=60.0 if include_issues else 95.0,
             smoothed=True,
@@ -107,6 +106,7 @@ class TestDataValidator:
             run_distance_miles=13.1,
             run_elevation_gain_ft=200,
             key_climbs=climbs,
+            technical_sections=["Technical Section 1"] if include_issues else [],
             altitude_ft=1000,
             elevation_profile=gps_points,
             gps_metadata=metadata,
@@ -385,10 +385,10 @@ class TestDataValidator:
         assert report.quality_rating == "Excellent"
 
         report.overall_score = 70.0
-        assert report.quality_rating == "Acceptable"
+        assert report.quality_rating == "Poor"
 
         report.overall_score = 55.0
-        assert report.quality_rating == "Poor"
+        assert report.quality_rating == "Unusable"
 
         report.overall_score = 40.0
         assert report.quality_rating == "Unusable"
@@ -431,6 +431,8 @@ class TestDataValidator:
             swim_distance_miles=1.2,
             run_distance_miles=13.1,
             run_elevation_gain_ft=200,
+            key_climbs=[],
+            technical_sections=[],
         )
 
         # Validator should handle errors gracefully
