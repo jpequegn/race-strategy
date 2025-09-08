@@ -25,9 +25,9 @@ from src.utils.course_loader import load_happy_valley_70_3_gps, load_alpe_dhuez_
 
 def print_enhanced_analysis(course_name, results):
     """Pretty print the enhanced course analysis results"""
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"🚴 ENHANCED COURSE ANALYSIS: {course_name}")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     # Difficulty Metrics from Calculator
     diff_metrics = results["difficulty_metrics"]
@@ -230,9 +230,9 @@ def main():
         print(f"❌ Error in comparison: {e}")
 
     # Summary
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print("📋 ENHANCED ANALYSIS SUMMARY")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     print("\n✅ Successfully demonstrated Issue #13 requirements:")
     print("   1. ✅ Enhanced CourseAnalyzer signature with real elevation data")

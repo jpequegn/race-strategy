@@ -707,19 +707,19 @@ class TestExampleGPXFiles:
         assert course.name is not None
 
         # Flat course should have minimal elevation gain (adjust based on actual parser output)
-        assert (
-            course.bike_elevation_gain_ft < 300
-        ), f"Expected minimal elevation gain, got {course.bike_elevation_gain_ft}ft"
+        assert course.bike_elevation_gain_ft < 300, (
+            f"Expected minimal elevation gain, got {course.bike_elevation_gain_ft}ft"
+        )
 
         # Should have reasonable distance (adjust based on actual GPX data)
-        assert (
-            5 <= course.bike_distance_miles <= 35
-        ), f"Expected reasonable distance, got {course.bike_distance_miles}"
+        assert 5 <= course.bike_distance_miles <= 35, (
+            f"Expected reasonable distance, got {course.bike_distance_miles}"
+        )
 
         # Flat course should have few or no significant climbs
-        assert (
-            len(course.key_climbs) <= 2
-        ), f"Flat course should have minimal climbs, got {len(course.key_climbs)}"
+        assert len(course.key_climbs) <= 2, (
+            f"Flat course should have minimal climbs, got {len(course.key_climbs)}"
+        )
 
     def test_hilly_course_characteristics(self):
         """Test hilly course GPX file parsing and characteristics"""
@@ -735,27 +735,27 @@ class TestExampleGPXFiles:
         assert isinstance(course, CourseProfile)
 
         # Hilly course should have significant elevation gain (adjust based on actual parser output)
-        assert (
-            2000 <= course.bike_elevation_gain_ft <= 15000
-        ), f"Expected significant elevation gain, got {course.bike_elevation_gain_ft}ft"
+        assert 2000 <= course.bike_elevation_gain_ft <= 15000, (
+            f"Expected significant elevation gain, got {course.bike_elevation_gain_ft}ft"
+        )
 
         # Should have reasonable distance
-        assert (
-            20 <= course.bike_distance_miles <= 50
-        ), f"Expected reasonable distance, got {course.bike_distance_miles}"
+        assert 20 <= course.bike_distance_miles <= 50, (
+            f"Expected reasonable distance, got {course.bike_distance_miles}"
+        )
 
         # Hilly course should have multiple significant climbs
-        assert (
-            len(course.key_climbs) >= 3
-        ), f"Hilly course should have multiple climbs, got {len(course.key_climbs)}"
+        assert len(course.key_climbs) >= 3, (
+            f"Hilly course should have multiple climbs, got {len(course.key_climbs)}"
+        )
 
         # Check that climbs have reasonable characteristics
         for climb in course.key_climbs:
             assert climb.avg_grade > 0, "Climb should have positive grade"
             assert climb.length_miles > 0, "Climb should have positive length"
-            assert (
-                climb.elevation_gain_ft > 0
-            ), "Climb should have positive elevation gain"
+            assert climb.elevation_gain_ft > 0, (
+                "Climb should have positive elevation gain"
+            )
 
     def test_mountain_course_characteristics(self):
         """Test mountain course GPX file parsing and characteristics"""
@@ -771,9 +771,9 @@ class TestExampleGPXFiles:
         assert isinstance(course, CourseProfile)
 
         # Mountain course should have extreme elevation gain
-        assert (
-            course.bike_elevation_gain_ft >= 5000
-        ), f"Expected >5000ft gain, got {course.bike_elevation_gain_ft}ft"
+        assert course.bike_elevation_gain_ft >= 5000, (
+            f"Expected >5000ft gain, got {course.bike_elevation_gain_ft}ft"
+        )
 
         # Note: Altitude detection may not work as expected with synthetic GPS data
         # Skip altitude checks for now as they depend on GPS metadata parsing
@@ -784,9 +784,9 @@ class TestExampleGPXFiles:
         #     assert course.altitude_effects.base_altitude_ft >= 8000
 
         # Mountain course should have significant climbs
-        assert (
-            len(course.key_climbs) >= 2
-        ), f"Mountain course should have major climbs, got {len(course.key_climbs)}"
+        assert len(course.key_climbs) >= 2, (
+            f"Mountain course should have major climbs, got {len(course.key_climbs)}"
+        )
 
         # At least one climb should be very steep
         max_grade = (
@@ -810,19 +810,19 @@ class TestExampleGPXFiles:
         assert isinstance(course, CourseProfile)
 
         # Urban course should have moderate elevation gain (adjust based on actual parser output)
-        assert (
-            800 <= course.bike_elevation_gain_ft <= 8000
-        ), f"Expected moderate elevation gain, got {course.bike_elevation_gain_ft}ft"
+        assert 800 <= course.bike_elevation_gain_ft <= 8000, (
+            f"Expected moderate elevation gain, got {course.bike_elevation_gain_ft}ft"
+        )
 
         # Should have reasonable urban distance
-        assert (
-            15 <= course.bike_distance_miles <= 40
-        ), f"Expected reasonable distance, got {course.bike_distance_miles}"
+        assert 15 <= course.bike_distance_miles <= 40, (
+            f"Expected reasonable distance, got {course.bike_distance_miles}"
+        )
 
         # Urban course should have multiple short climbs
-        assert (
-            len(course.key_climbs) >= 2
-        ), f"Urban course should have multiple climbs, got {len(course.key_climbs)}"
+        assert len(course.key_climbs) >= 2, (
+            f"Urban course should have multiple climbs, got {len(course.key_climbs)}"
+        )
 
     def test_edge_cases_parsing(self):
         """Test edge cases GPX file parsing and error handling"""
@@ -843,14 +843,14 @@ class TestExampleGPXFiles:
         assert hasattr(course.gps_metadata, "data_quality_score")
 
         # Edge cases file should have detected some validation errors
-        assert (
-            course.gps_metadata.total_validation_errors > 0
-        ), "Edge cases should detect validation errors"
+        assert course.gps_metadata.total_validation_errors > 0, (
+            "Edge cases should detect validation errors"
+        )
 
         # Data quality score should be lower due to issues
-        assert (
-            course.gps_metadata.data_quality_score < 100
-        ), "Edge cases should have reduced quality score"
+        assert course.gps_metadata.data_quality_score < 100, (
+            "Edge cases should have reduced quality score"
+        )
 
     def test_all_example_files_have_gps_metadata(self):
         """Test that all example files generate GPS metadata"""
@@ -872,18 +872,18 @@ class TestExampleGPXFiles:
             course = self.parser.parse_gpx_file(file_path)
 
             # Each file should have GPS metadata
-            assert (
-                course.gps_metadata is not None
-            ), f"{filename} should have GPS metadata"
-            assert hasattr(
-                course.gps_metadata, "total_points"
-            ), f"{filename} metadata missing total_points"
-            assert hasattr(
-                course.gps_metadata, "data_quality_score"
-            ), f"{filename} metadata missing quality score"
-            assert (
-                course.gps_metadata.total_points > 0
-            ), f"{filename} should have GPS points"
+            assert course.gps_metadata is not None, (
+                f"{filename} should have GPS metadata"
+            )
+            assert hasattr(course.gps_metadata, "total_points"), (
+                f"{filename} metadata missing total_points"
+            )
+            assert hasattr(course.gps_metadata, "data_quality_score"), (
+                f"{filename} metadata missing quality score"
+            )
+            assert course.gps_metadata.total_points > 0, (
+                f"{filename} should have GPS points"
+            )
 
     def test_example_files_elevation_profiles(self):
         """Test that example files generate elevation profiles"""
@@ -904,18 +904,18 @@ class TestExampleGPXFiles:
             course = self.parser.parse_gpx_file(file_path)
 
             # Each file should have elevation profile data
-            assert hasattr(
-                course, "elevation_profile"
-            ), f"{filename} should have elevation_profile"
-            assert (
-                len(course.elevation_profile) > 0
-            ), f"{filename} should have elevation profile points"
+            assert hasattr(course, "elevation_profile"), (
+                f"{filename} should have elevation_profile"
+            )
+            assert len(course.elevation_profile) > 0, (
+                f"{filename} should have elevation profile points"
+            )
 
             # All elevation points should be valid GPSPoint objects
             for point in course.elevation_profile[:10]:  # Check first 10 points
-                assert isinstance(
-                    point, GPSPoint
-                ), f"{filename} elevation profile contains invalid point"
+                assert isinstance(point, GPSPoint), (
+                    f"{filename} elevation profile contains invalid point"
+                )
                 assert hasattr(point, "latitude"), "GPS point missing latitude"
                 assert hasattr(point, "longitude"), "GPS point missing longitude"
                 assert hasattr(point, "elevation_ft"), "GPS point missing elevation"
@@ -954,15 +954,15 @@ class TestExampleGPXFiles:
             )
 
             if course_type != "flat":  # Flat might be an outlier
-                assert (
-                    elevation_per_mile >= 0
-                ), f"{course_type} should have non-negative difficulty"
+                assert elevation_per_mile >= 0, (
+                    f"{course_type} should have non-negative difficulty"
+                )
 
             # Mountain should definitely be hardest
             if course_type == "mountain":
-                assert (
-                    elevation_per_mile > 200
-                ), f"Mountain course should have high elevation per mile, got {elevation_per_mile}"
+                assert elevation_per_mile > 200, (
+                    f"Mountain course should have high elevation per mile, got {elevation_per_mile}"
+                )
 
 
 if __name__ == "__main__":

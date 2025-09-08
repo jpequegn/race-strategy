@@ -64,7 +64,7 @@ class RaceStrategyPipeline:
         # Step 5: Generate pacing strategy with segment insights
         segment_insights = "\n".join(
             [
-                f"Segment {i+1}: {sa.power_recommendation} | {sa.tactical_approach}"
+                f"Segment {i + 1}: {sa.power_recommendation} | {sa.tactical_approach}"
                 for i, sa in enumerate(segment_analyses)
             ]
         )
@@ -127,7 +127,7 @@ Swim: {course.swim_distance_miles} miles
 Key Climbs:
 {climbs_text}
 
-Technical Sections: {', '.join(course.technical_sections)}
+Technical Sections: {", ".join(course.technical_sections)}
 """
 
     def _format_athlete_data(self, athlete: AthleteProfile) -> str:
@@ -140,8 +140,8 @@ Swim Pace: {athlete.swim_pace_per_100m}s/100m
 Run Threshold: {athlete.run_threshold_pace} min/mile
 Previous 70.3: {athlete.previous_70_3_time or "None"}
 Target Time: {athlete.target_finish_time or "Not specified"}
-Strengths: {', '.join(athlete.strengths)}
-Limiters: {', '.join(athlete.limiters)}
+Strengths: {", ".join(athlete.strengths)}
+Limiters: {", ".join(athlete.limiters)}
 Age: {athlete.age}, Weight: {athlete.weight_lbs}lbs
 """
 
@@ -218,14 +218,14 @@ Difficulty Justification: {metrics.difficulty_justification}
     def _format_segment_data(self, segment: Dict, course: CourseProfile) -> str:
         """Format individual segment data for detailed analysis"""
         return f"""
-Segment: {segment['name']}
-Location: Mile {segment['start_mile']:.1f} - {segment['start_mile'] + segment['length_miles']:.1f}
-Distance: {segment['length_miles']:.1f} miles
-Average Gradient: {segment['avg_grade']:.1f}%
-Maximum Gradient: {segment['max_grade']:.1f}%
-Elevation Gain: {segment['elevation_gain_ft']} feet
-Difficulty Score: {segment['difficulty_score']:.2f}
-Strategic Importance: {segment['strategic_importance']}
+Segment: {segment["name"]}
+Location: Mile {segment["start_mile"]:.1f} - {segment["start_mile"] + segment["length_miles"]:.1f}
+Distance: {segment["length_miles"]:.1f} miles
+Average Gradient: {segment["avg_grade"]:.1f}%
+Maximum Gradient: {segment["max_grade"]:.1f}%
+Elevation Gain: {segment["elevation_gain_ft"]} feet
+Difficulty Score: {segment["difficulty_score"]:.2f}
+Strategic Importance: {segment["strategic_importance"]}
 """
 
     def _format_segment_position(self, segment: Dict, course: CourseProfile) -> str:
@@ -247,8 +247,8 @@ Strategic Importance: {segment['strategic_importance']}
 Race Position: {race_phase} ({position_pct:.0f}% through bike course)
 Mile Position: {start_mile:.1f} of {total_miles} total bike miles
 Fatigue Context: Athlete will have been racing for approximately {(start_mile / 16.0):.1f} hours at this point
-Remaining Distance: {total_miles - start_mile - segment['length_miles']:.1f} miles after this segment
-Run Impact: This segment occurs {13.1 if start_mile > total_miles * 0.9 else 'well'} before the run leg
+Remaining Distance: {total_miles - start_mile - segment["length_miles"]:.1f} miles after this segment
+Run Impact: This segment occurs {13.1 if start_mile > total_miles * 0.9 else "well"} before the run leg
 """
 
     def _format_athlete_for_segment(
@@ -274,7 +274,7 @@ Athlete: {athlete.name}
 FTP: {athlete.ftp_watts}W ({watts_per_kg})
 Climbing Ability: {climbing_strength}
 Experience Level: {athlete.experience_level}
-Relevant Strengths: {', '.join([s for s in athlete.strengths if s in ['bike', 'climbing', 'power']])}
-Relevant Limiters: {', '.join([l for l in athlete.limiters if l in ['bike', 'climbing', 'hills', 'endurance']])}
-Segment Challenge Level: {'High' if segment['difficulty_score'] > 0.7 else 'Moderate' if segment['difficulty_score'] > 0.4 else 'Manageable'}
+Relevant Strengths: {", ".join([s for s in athlete.strengths if s in ["bike", "climbing", "power"]])}
+Relevant Limiters: {", ".join([l for l in athlete.limiters if l in ["bike", "climbing", "hills", "endurance"]])}
+Segment Challenge Level: {"High" if segment["difficulty_score"] > 0.7 else "Moderate" if segment["difficulty_score"] > 0.4 else "Manageable"}
 """

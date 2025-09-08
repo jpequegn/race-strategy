@@ -185,7 +185,6 @@ class GPSParser:
                         self.config.max_longitude,
                     )
                 ):
-
                     try:
                         distance = geodesic(
                             (prev_point.latitude, prev_point.longitude),
@@ -348,7 +347,6 @@ class GPSParser:
                 gps_points[i].gradient_percent
                 and gps_points[i].gradient_percent <= descent_threshold
             ):
-
                 # Check if descent continues for minimum length
                 start_mile = gps_points[i].distance_miles
                 j = i + 1
@@ -499,7 +497,7 @@ class GPSParser:
             if distance_diff > self.config.max_distance_jump_miles:
                 large_jumps += 1
                 logger.warning(
-                    f"Large distance jump detected between points {i-1} and {i}: "
+                    f"Large distance jump detected between points {i - 1} and {i}: "
                     f"{distance_diff:.3f} miles (threshold: {self.config.max_distance_jump_miles} miles)"
                 )
 
