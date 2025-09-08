@@ -123,13 +123,35 @@
     "run_profile": "Two loops with hills",
     "run_surface": "Mixed road and wide pedestrian paths"
   },
+  "elevation_profile": [
+    { "distance_miles": 0.0, "elevation_ft": 1200 },
+    { "distance_miles": 2.0, "elevation_ft": 1180 },
+    { "distance_miles": 2.69, "elevation_ft": 1175 },
+    { "distance_miles": 3.5, "elevation_ft": 1220 },
+    { "distance_miles": 5.0, "elevation_ft": 1285 },
+    { "distance_miles": 8.0, "elevation_ft": 1350 },
+    { "distance_miles": 12.0, "elevation_ft": 1420 },
+    { "distance_miles": 16.0, "elevation_ft": 1380 },
+    { "distance_miles": 20.0, "elevation_ft": 1320 },
+    { "distance_miles": 25.9, "elevation_ft": 1280 },
+    { "distance_miles": 27.0, "elevation_ft": 1450 },
+    { "distance_miles": 28.0, "elevation_ft": 1580 },
+    { "distance_miles": 30.0, "elevation_ft": 1320 },
+    { "distance_miles": 35.0, "elevation_ft": 1580 },
+    { "distance_miles": 40.0, "elevation_ft": 1850 },
+    { "distance_miles": 45.0, "elevation_ft": 1650 },
+    { "distance_miles": 50.0, "elevation_ft": 1820 },
+    { "distance_miles": 55.0, "elevation_ft": 2100 },
+    { "distance_miles": 56.1, "elevation_ft": 2180 }
+  ],
   "data_source": {
     "type": "GPS Track",
     "source": "Local GPX file",
     "gpx_file": "/Users/julienpequegnot/Code/race-strategy/data/im70.3_pennstate.gpx",
     "data_quality_score": 100.0,
     "total_gps_points": 3722,
-    "parsed_at": "2025-09-07T17:16:09.309247"
+    "parsed_at": "2025-09-07T17:16:09.309247",
+    "elevation_profile_added": "2025-09-08T11:50:00"
   },
   "notes": "Point-to-point course with dual transitions"
 }

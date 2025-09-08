@@ -95,22 +95,14 @@ class CourseValidationRunner:
     def validate_json_file(self, json_path: Path) -> Tuple[str, DataQualityReport]:
         """Validate a JSON course file and return its quality report."""
         try:
-            with open(json_path, "r") as f:
-                course_data = json.load(f)
-
-            # Convert JSON to CourseProfile - simplified version
-            course = CourseProfile(
-                name=course_data.get("name", json_path.stem),
-                bike_distance_miles=course_data.get("bike_distance_miles", 0),
-                bike_elevation_gain_ft=course_data.get("bike_elevation_gain_ft", 0),
-                swim_distance_miles=course_data.get("swim_distance_miles", 1.2),
-                run_distance_miles=course_data.get("run_distance_miles", 13.1),
-                run_elevation_gain_ft=course_data.get("run_elevation_gain_ft", 0),
-                key_climbs=[],  # JSON format doesn't include GPS-based climb data
-                technical_sections=course_data.get("technical_sections", []),
-                altitude_ft=course_data.get("altitude_ft", 0),
-            )
-
+            from src.utils.course_loader import load_course_from_json
+            
+            # Use the proper course loader to handle elevation profile conversion
+            # Pass just the course name without extension and the directory
+            course_name = json_path.stem  # filename without extension
+            data_dir = str(json_path.parent)  # directory path
+            course = load_course_from_json(course_name, data_dir)
+            
             report = self.validator.validate_course(course)
             return course.name, report
 

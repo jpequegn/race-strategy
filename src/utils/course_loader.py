@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from ..models.course import AltitudeEffects, ClimbSegment, CourseProfile
+from ..models.course import AltitudeEffects, ClimbSegment, CourseProfile, GPSPoint
 
 
 def load_course_from_json(
@@ -91,6 +91,19 @@ def load_course_from_json(
             acclimatization_needed=altitude_data.get("acclimatization_needed", False),
             hydration_multiplier=altitude_data.get("hydration_multiplier", 1.0),
         )
+        
+    # Convert elevation_profile from dictionaries to GPSPoint objects
+    elevation_profile = []
+    if "elevation_profile" in course_data and course_data["elevation_profile"]:
+        for point_data in course_data["elevation_profile"]:
+            point = GPSPoint(
+                latitude=0.0,  # JSON elevation profiles don't have lat/lon
+                longitude=0.0,
+                elevation_ft=point_data.get("elevation_ft", 0.0),
+                distance_miles=point_data.get("distance_miles", 0.0),
+                gradient_percent=point_data.get("gradient_percent")
+            )
+            elevation_profile.append(point)
 
     # Create CourseProfile object
     course_profile = CourseProfile(
@@ -107,7 +120,7 @@ def load_course_from_json(
         altitude_effects=altitude_effects,
         start_coords=course_data.get("start_coords"),
         finish_coords=course_data.get("finish_coords"),
-        elevation_profile=course_data.get("elevation_profile", []),
+        elevation_profile=elevation_profile,
         gps_metadata=None,  # JSON doesn't contain metadata object
     )
 

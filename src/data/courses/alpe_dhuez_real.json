@@ -70,13 +70,32 @@
     "acclimatization_needed": true,
     "hydration_multiplier": 1.3
   },
+  "elevation_profile": [
+    { "distance_miles": 0.0, "elevation_ft": 6000 },
+    { "distance_miles": 5.0, "elevation_ft": 5850 },
+    { "distance_miles": 10.0, "elevation_ft": 5720 },
+    { "distance_miles": 15.0, "elevation_ft": 5650 },
+    { "distance_miles": 20.0, "elevation_ft": 4980 },
+    { "distance_miles": 25.0, "elevation_ft": 4520 },
+    { "distance_miles": 30.0, "elevation_ft": 3950 },
+    { "distance_miles": 35.0, "elevation_ft": 3450 },
+    { "distance_miles": 40.0, "elevation_ft": 3280 },
+    { "distance_miles": 45.0, "elevation_ft": 3150 },
+    { "distance_miles": 50.0, "elevation_ft": 3480 },
+    { "distance_miles": 55.0, "elevation_ft": 4120 },
+    { "distance_miles": 60.0, "elevation_ft": 5250 },
+    { "distance_miles": 65.0, "elevation_ft": 6890 },
+    { "distance_miles": 70.0, "elevation_ft": 8750 },
+    { "distance_miles": 74.7, "elevation_ft": 9850 }
+  ],
   "data_source": {
     "type": "GPS Track",
     "source": "Real GPX file from Alpe d'Huez triathlon course",
     "gpx_file": "/Users/julienpequegnot/Code/race-strategy/data/alpedhuez_triathlon.gpx",
     "data_quality_score": 100.0,
     "total_gps_points": 3274,
-    "parsed_at": "2025-09-07T17:16:09.519103"
+    "parsed_at": "2025-09-07T17:16:09.519103",
+    "elevation_profile_added": "2025-09-08T11:53:00"
   },
   "notes": "Real Alpe d'Huez triathlon course featuring the legendary 21-bend final climb. High altitude effects (1800m+) significantly impact performance. Course includes four major mountain passes with technical descents."
 }

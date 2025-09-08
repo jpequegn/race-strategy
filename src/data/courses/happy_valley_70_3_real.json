@@ -70,6 +70,49 @@
     "run_profile": "Two loops with hills",
     "run_surface": "Mixed road and wide pedestrian paths"
   },
+  "elevation_profile": [
+    { "distance_miles": 0.0, "elevation_ft": 1200 },
+    { "distance_miles": 1.0, "elevation_ft": 1185 },
+    { "distance_miles": 2.0, "elevation_ft": 1170 },
+    { "distance_miles": 3.2, "elevation_ft": 1160 },
+    { "distance_miles": 4.0, "elevation_ft": 1210 },
+    { "distance_miles": 5.5, "elevation_ft": 1290 },
+    { "distance_miles": 7.0, "elevation_ft": 1350 },
+    { "distance_miles": 8.8, "elevation_ft": 1420 },
+    { "distance_miles": 10.5, "elevation_ft": 1465 },
+    { "distance_miles": 11.7, "elevation_ft": 1445 },
+    { "distance_miles": 13.0, "elevation_ft": 1380 },
+    { "distance_miles": 15.2, "elevation_ft": 1320 },
+    { "distance_miles": 17.5, "elevation_ft": 1285 },
+    { "distance_miles": 18.4, "elevation_ft": 1270 },
+    { "distance_miles": 19.8, "elevation_ft": 1385 },
+    { "distance_miles": 21.2, "elevation_ft": 1520 },
+    { "distance_miles": 22.6, "elevation_ft": 1650 },
+    { "distance_miles": 23.8, "elevation_ft": 1740 },
+    { "distance_miles": 25.0, "elevation_ft": 1685 },
+    { "distance_miles": 26.5, "elevation_ft": 1620 },
+    { "distance_miles": 28.7, "elevation_ft": 1580 },
+    { "distance_miles": 30.2, "elevation_ft": 1650 },
+    { "distance_miles": 32.0, "elevation_ft": 1785 },
+    { "distance_miles": 33.8, "elevation_ft": 1920 },
+    { "distance_miles": 35.5, "elevation_ft": 2050 },
+    { "distance_miles": 37.2, "elevation_ft": 1985 },
+    { "distance_miles": 38.2, "elevation_ft": 1920 },
+    { "distance_miles": 39.0, "elevation_ft": 2150 },
+    { "distance_miles": 40.2, "elevation_ft": 2450 },
+    { "distance_miles": 41.0, "elevation_ft": 2767 },
+    { "distance_miles": 42.8, "elevation_ft": 2620 },
+    { "distance_miles": 44.5, "elevation_ft": 2380 },
+    { "distance_miles": 46.2, "elevation_ft": 2150 },
+    { "distance_miles": 48.0, "elevation_ft": 1980 },
+    { "distance_miles": 50.0, "elevation_ft": 1850 },
+    { "distance_miles": 50.6, "elevation_ft": 1820 },
+    { "distance_miles": 52.2, "elevation_ft": 1950 },
+    { "distance_miles": 53.8, "elevation_ft": 2080 },
+    { "distance_miles": 55.0, "elevation_ft": 2180 },
+    { "distance_miles": 55.4, "elevation_ft": 2210 },
+    { "distance_miles": 56.0, "elevation_ft": 2200 }
+  ],
   "data_source": {
     "type": "Research-based realistic profile",
     "sources": [
@@ -79,6 +122,6 @@
       "Historical race data analysis"
     ],
     "data_quality_score": 95.0,
-    "note": "Created from extensive research due to GPS data access limitations"
+    "note": "Created from extensive research due to GPS data access limitations. Elevation profile synthesized from climb data."
   }
 }

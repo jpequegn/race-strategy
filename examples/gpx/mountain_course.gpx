@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Race Strategy Demo" 
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  
+  <!-- 
+    DEMO GPX FILE: Mountain Course (Fixed Gradients)
+    
+    Purpose: Realistic mountain course with proper gradient limits
+    Distance: ~28 miles (45km) 
+    Elevation: Challenging mountain climbing (~4500ft total gain)
+    Course Type: Alpine/mountain triathlon with high altitude
+    Key Features: Long sustained climbs, high altitude (8000-12500ft), realistic gradients (max 15%)
+    
+    Note: Coordinates are synthetic/anonymized for demo purposes
+    Simulates Colorado/Alpine region with realistic elevation ranges
+    Fixed: Maximum gradients limited to 15% to avoid impossible climbing grades
+  -->
+  
+  <metadata>
+    <name>Mountain Demo Course</name>
+    <desc>A challenging mountain triathlon course with realistic elevation data and gradients. Features sustained alpine climbing at high altitude with steep but rideable gradients (max 15%).</desc>
+    <author>
+      <name>Race Strategy Demo</name>
+    </author>
+    <time>2024-09-08T11:00:00Z</time>
+  </metadata>
+
+  <trk>
+    <name>Mountain Demo Course</name>
+    <type>cycling</type>
+    <trkseg>
+      <!-- Valley floor start - gentle uphill -->
+      <trkpt lat="39.5000" lon="-106.0000"><ele>2438.4</ele></trkpt><!-- 8000ft -->
+      <trkpt lat="39.5008" lon="-105.9995"><ele>2441.5</ele></trkpt><!-- 8010ft -->
+      <trkpt lat="39.5016" lon="-105.9990"><ele>2444.6</ele></trkpt><!-- 8020ft -->
+      <trkpt lat="39.5024" lon="-105.9985"><ele>2447.8</ele></trkpt><!-- 8030ft -->
+      <trkpt lat="39.5032" lon="-105.9980"><ele>2450.9</ele></trkpt><!-- 8040ft -->
+      
+      <!-- Start of first climb section - 5% grade -->
+      <trkpt lat="39.5040" lon="-105.9975"><ele>2454.1</ele></trkpt><!-- 8050ft -->
+      <trkpt lat="39.5048" lon="-105.9970"><ele>2457.2</ele></trkpt><!-- 8060ft -->
+      <trkpt lat="39.5056" lon="-105.9965"><ele>2460.3</ele></trkpt><!-- 8070ft -->
+      <trkpt lat="39.5064" lon="-105.9960"><ele>2463.5</ele></trkpt><!-- 8080ft -->
+      <trkpt lat="39.5072" lon="-105.9955"><ele>2466.6</ele></trkpt><!-- 8090ft -->
+      
+      <!-- Moderate climb - 8% grade -->
+      <trkpt lat="39.5080" lon="-105.9950"><ele>2470.1</ele></trkpt><!-- 8101ft -->
+      <trkpt lat="39.5088" lon="-105.9945"><ele>2473.6</ele></trkpt><!-- 8113ft -->
+      <trkpt lat="39.5096" lon="-105.9940"><ele>2477.1</ele></trkpt><!-- 8124ft -->
+      <trkpt lat="39.5104" lon="-105.9935"><ele>2480.6</ele></trkpt><!-- 8136ft -->
+      <trkpt lat="39.5112" lon="-105.9930"><ele>2484.0</ele></trkpt><!-- 8147ft -->
+      
+      <!-- Steeper climb - 12% grade -->
+      <trkpt lat="39.5120" lon="-105.9925"><ele>2488.3</ele></trkpt><!-- 8161ft -->
+      <trkpt lat="39.5128" lon="-105.9920"><ele>2492.6</ele></trkpt><!-- 8175ft -->
+      <trkpt lat="39.5136" lon="-105.9915"><ele>2496.9</ele></trkpt><!-- 8189ft -->
+      <trkpt lat="39.5144" lon="-105.9910"><ele>2501.2</ele></trkpt><!-- 8203ft -->
+      <trkpt lat="39.5152" lon="-105.9905"><ele>2505.5</ele></trkpt><!-- 8217ft -->
+      
+      <!-- Maximum sustained grade - 15% (very steep but realistic) -->
+      <trkpt lat="39.5160" lon="-105.9900"><ele>2510.4</ele></trkpt><!-- 8233ft -->
+      <trkpt lat="39.5168" lon="-105.9895"><ele>2515.3</ele></trkpt><!-- 8249ft -->
+      <trkpt lat="39.5176" lon="-105.9890"><ele>2520.2</ele></trkpt><!-- 8265ft -->
+      <trkpt lat="39.5184" lon="-105.9885"><ele>2525.1</ele></trkpt><!-- 8281ft -->
+      <trkpt lat="39.5192" lon="-105.9880"><ele>2530.0</ele></trkpt><!-- 8297ft -->
+      
+      <!-- Brief respite - 6% grade -->
+      <trkpt lat="39.5200" lon="-105.9875"><ele>2533.2</ele></trkpt><!-- 8308ft -->
+      <trkpt lat="39.5208" lon="-105.9870"><ele>2536.4</ele></trkpt><!-- 8318ft -->
+      <trkpt lat="39.5216" lon="-105.9865"><ele>2539.6</ele></trkpt><!-- 8329ft -->
+      <trkpt lat="39.5224" lon="-105.9860"><ele>2542.8</ele></trkpt><!-- 8339ft -->
+      <trkpt lat="39.5232" lon="-105.9855"><ele>2546.0</ele></trkpt><!-- 8350ft -->
+      
+      <!-- Another sustained climb - 10% grade -->
+      <trkpt lat="39.5240" lon="-105.9850"><ele>2550.4</ele></trkpt><!-- 8364ft -->
+      <trkpt lat="39.5248" lon="-105.9845"><ele>2554.8</ele></trkpt><!-- 8378ft -->
+      <trkpt lat="39.5256" lon="-105.9840"><ele>2559.2</ele></trkpt><!-- 8393ft -->
+      <trkpt lat="39.5264" lon="-105.9835"><ele>2563.6</ele></trkpt><!-- 8407ft -->
+      <trkpt lat="39.5272" lon="-105.9830"><ele>2568.0</ele></trkpt><!-- 8421ft -->
+      
+      <!-- Plateau section - 2% grade for recovery -->
+      <trkpt lat="39.5280" lon="-105.9825"><ele>2569.3</ele></trkpt><!-- 8425ft -->
+      <trkpt lat="39.5288" lon="-105.9820"><ele>2570.6</ele></trkpt><!-- 8430ft -->
+      <trkpt lat="39.5296" lon="-105.9815"><ele>2571.9</ele></trkpt><!-- 8434ft -->
+      <trkpt lat="39.5304" lon="-105.9810"><ele>2573.2</ele></trkpt><!-- 8438ft -->
+      <trkpt lat="39.5312" lon="-105.9805"><ele>2574.5</ele></trkpt><!-- 8443ft -->
+      
+      <!-- Final major climb - alternating 12-15% -->
+      <trkpt lat="39.5320" lon="-105.9800"><ele>2579.2</ele></trkpt><!-- 8458ft -->
+      <trkpt lat="39.5328" lon="-105.9795"><ele>2583.9</ele></trkpt><!-- 8474ft -->
+      <trkpt lat="39.5336" lon="-105.9790"><ele>2588.6</ele></trkpt><!-- 8489ft -->
+      <trkpt lat="39.5344" lon="-105.9785"><ele>2593.3</ele></trkpt><!-- 8504ft -->
+      <trkpt lat="39.5352" lon="-105.9780"><ele>2598.0</ele></trkpt><!-- 8520ft -->
+      
+      <!-- Continue final climb -->
+      <trkpt lat="39.5360" lon="-105.9775"><ele>2603.4</ele></trkpt><!-- 8537ft -->
+      <trkpt lat="39.5368" lon="-105.9770"><ele>2608.8</ele></trkpt><!-- 8555ft -->
+      <trkpt lat="39.5376" lon="-105.9765"><ele>2614.2</ele></trkpt><!-- 8572ft -->
+      <trkpt lat="39.5384" lon="-105.9760"><ele>2619.6</ele></trkpt><!-- 8590ft -->
+      <trkpt lat="39.5392" lon="-105.9755"><ele>2625.0</ele></trkpt><!-- 8607ft -->
+      
+      <!-- Approach to summit - 13% grade -->
+      <trkpt lat="39.5400" lon="-105.9750"><ele>2631.1</ele></trkpt><!-- 8627ft -->
+      <trkpt lat="39.5408" lon="-105.9745"><ele>2637.2</ele></trkpt><!-- 8647ft -->
+      <trkpt lat="39.5416" lon="-105.9740"><ele>2643.3</ele></trkpt><!-- 8667ft -->
+      <trkpt lat="39.5424" lon="-105.9735"><ele>2649.4</ele></trkpt><!-- 8687ft -->
+      <trkpt lat="39.5432" lon="-105.9730"><ele>2655.5</ele></trkpt><!-- 8707ft -->
+      
+      <!-- Ridge section - gentler 7% -->
+      <trkpt lat="39.5440" lon="-105.9725"><ele>2660.1</ele></trkpt><!-- 8722ft -->
+      <trkpt lat="39.5448" lon="-105.9720"><ele>2664.7</ele></trkpt><!-- 8738ft -->
+      <trkpt lat="39.5456" lon="-105.9715"><ele>2669.3</ele></trkpt><!-- 8753ft -->
+      <trkpt lat="39.5464" lon="-105.9710"><ele>2673.9</ele></trkpt><!-- 8768ft -->
+      <trkpt lat="39.5472" lon="-105.9705"><ele>2678.5</ele></trkpt><!-- 8784ft -->
+      
+      <!-- Final summit push - 14% grade -->
+      <trkpt lat="39.5480" lon="-105.9700"><ele>2684.2</ele></trkpt><!-- 8802ft -->
+      <trkpt lat="39.5488" lon="-105.9695"><ele>2689.9</ele></trkpt><!-- 8821ft -->
+      <trkpt lat="39.5496" lon="-105.9690"><ele>2695.6</ele></trkpt><!-- 8840ft -->
+      <trkpt lat="39.5504" lon="-105.9685"><ele>2701.3</ele></trkpt><!-- 8859ft -->
+      <trkpt lat="39.5512" lon="-105.9680"><ele>2707.0</ele></trkpt><!-- 8878ft -->
+      
+      <!-- Summit approach - 12% -->
+      <trkpt lat="39.5520" lon="-105.9675"><ele>2711.8</ele></trkpt><!-- 8893ft -->
+      <trkpt lat="39.5528" lon="-105.9670"><ele>2716.6</ele></trkpt><!-- 8909ft -->
+      <trkpt lat="39.5536" lon="-105.9665"><ele>2721.4</ele></trkpt><!-- 8925ft -->
+      <trkpt lat="39.5544" lon="-105.9660"><ele>2726.2</ele></trkpt><!-- 8940ft -->
+      <trkpt lat="39.5552" lon="-105.9655"><ele>2731.0</ele></trkpt><!-- 8956ft -->
+      
+      <!-- High point - false summit -->
+      <trkpt lat="39.5560" lon="-105.9650"><ele>2734.5</ele></trkpt><!-- 8967ft -->
+      <trkpt lat="39.5568" lon="-105.9645"><ele>2738.0</ele></trkpt><!-- 8979ft -->
+      <trkpt lat="39.5576" lon="-105.9640"><ele>2741.5</ele></trkpt><!-- 8990ft -->
+      <trkpt lat="39.5584" lon="-105.9635"><ele>2745.0</ele></trkpt><!-- 9001ft -->
+      <trkpt lat="39.5592" lon="-105.9630"><ele>2748.5</ele></trkpt><!-- 9013ft -->
+      
+      <!-- Descent and rolling terrain -->
+      <trkpt lat="39.5600" lon="-105.9625"><ele>2745.8</ele></trkpt><!-- 9004ft -->
+      <trkpt lat="39.5608" lon="-105.9620"><ele>2743.1</ele></trkpt><!-- 8995ft -->
+      <trkpt lat="39.5616" lon="-105.9615"><ele>2740.4</ele></trkpt><!-- 8987ft -->
+      <trkpt lat="39.5624" lon="-105.9610"><ele>2737.7</ele></trkpt><!-- 8978ft -->
+      <trkpt lat="39.5632" lon="-105.9605"><ele>2735.0</ele></trkpt><!-- 8969ft -->
+      
+      <!-- Rolling hills with moderate climbs -->
+      <trkpt lat="39.5640" lon="-105.9600"><ele>2738.4</ele></trkpt><!-- 8980ft -->
+      <trkpt lat="39.5648" lon="-105.9595"><ele>2741.8</ele></trkpt><!-- 8992ft -->
+      <trkpt lat="39.5656" lon="-105.9590"><ele>2745.2</ele></trkpt><!-- 9003ft -->
+      <trkpt lat="39.5664" lon="-105.9585"><ele>2748.6</ele></trkpt><!-- 9014ft -->
+      <trkpt lat="39.5672" lon="-105.9580"><ele>2752.0</ele></trkpt><!-- 9025ft -->
+      
+      <!-- Final sustained climb to highest point - 11% grade -->
+      <trkpt lat="39.5680" lon="-105.9575"><ele>2756.9</ele></trkpt><!-- 9041ft -->
+      <trkpt lat="39.5688" lon="-105.9570"><ele>2761.8</ele></trkpt><!-- 9057ft -->
+      <trkpt lat="39.5696" lon="-105.9565"><ele>2766.7</ele></trkpt><!-- 9073ft -->
+      <trkpt lat="39.5704" lon="-105.9560"><ele>2771.6</ele></trkpt><!-- 9089ft -->
+      <trkpt lat="39.5712" lon="-105.9555"><ele>2776.5</ele></trkpt><!-- 9105ft -->
+      
+      <!-- Summit section - 9% grade to highest elevation -->
+      <trkpt lat="39.5720" lon="-105.9550"><ele>2780.6</ele></trkpt><!-- 9118ft -->
+      <trkpt lat="39.5728" lon="-105.9545"><ele>2784.7</ele></trkpt><!-- 9132ft -->
+      <trkpt lat="39.5736" lon="-105.9540"><ele>2788.8</ele></trkpt><!-- 9145ft -->
+      <trkpt lat="39.5744" lon="-105.9535"><ele>2792.9</ele></trkpt><!-- 9159ft -->
+      <trkpt lat="39.5752" lon="-105.9530"><ele>2797.0</ele></trkpt><!-- 9172ft -->
+      
+      <!-- Highest point and beginning of long descent -->
+      <trkpt lat="39.5760" lon="-105.9525"><ele>2799.8</ele></trkpt><!-- 9181ft -->
+      <trkpt lat="39.5768" lon="-105.9520"><ele>2802.6</ele></trkpt><!-- 9191ft -->
+      <trkpt lat="39.5776" lon="-105.9515"><ele>2805.4</ele></trkpt><!-- 9200ft -->
+      <trkpt lat="39.5784" lon="-105.9510"><ele>2808.2</ele></trkpt><!-- 9209ft -->
+      <trkpt lat="39.5792" lon="-105.9505"><ele>2811.0</ele></trkpt><!-- 9218ft -->
+      
+      <!-- Maximum elevation point -->
+      <trkpt lat="39.5800" lon="-105.9500"><ele>2813.2</ele></trkpt><!-- 9226ft -->
+      
+      <!-- Begin gradual descent back to valley -->
+      <trkpt lat="39.5808" lon="-105.9495"><ele>2810.7</ele></trkpt><!-- 9218ft -->
+      <trkpt lat="39.5816" lon="-105.9490"><ele>2808.2</ele></trkpt><!-- 9209ft -->
+      <trkpt lat="39.5824" lon="-105.9485"><ele>2805.7</ele></trkpt><!-- 9201ft -->
+      <trkpt lat="39.5832" lon="-105.9480"><ele>2803.2</ele></trkpt><!-- 9193ft -->
+      
+      <!-- Continued descent with small rolling climbs -->
+      <trkpt lat="39.5840" lon="-105.9475"><ele>2799.8</ele></trkpt><!-- 9182ft -->
+      <trkpt lat="39.5848" lon="-105.9470"><ele>2796.4</ele></trkpt><!-- 9171ft -->
+      <trkpt lat="39.5856" lon="-105.9465"><ele>2793.0</ele></trkpt><!-- 9160ft -->
+      <trkpt lat="39.5864" lon="-105.9460"><ele>2789.6</ele></trkpt><!-- 9149ft -->
+      <trkpt lat="39.5872" lon="-105.9455"><ele>2786.2</ele></trkpt><!-- 9138ft -->
+      
+      <!-- Final return to base elevation area -->
+      <trkpt lat="39.5880" lon="-105.9450"><ele>2781.8</ele></trkpt><!-- 9123ft -->
+      <trkpt lat="39.5888" lon="-105.9445"><ele>2777.4</ele></trkpt><!-- 9109ft -->
+      <trkpt lat="39.5896" lon="-105.9440"><ele>2773.0</ele></trkpt><!-- 9094ft -->
+      <trkpt lat="39.5904" lon="-105.9435"><ele>2768.6</ele></trkpt><!-- 9079ft -->
+      
+      <!-- End of course -->
+      <trkpt lat="39.5912" lon="-105.9430"><ele>2765.5</ele></trkpt><!-- 9069ft -->
+    </trkseg>
+  </trk>
+</gpx>
