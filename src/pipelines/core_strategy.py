@@ -7,9 +7,11 @@ from ..models.conditions import RaceConditions
 from ..models.course import CourseProfile
 from ..utils.course_analyzer import DifficultyCalculator
 from ..utils.nutrition_calculator import NutritionCalculator
+from .equipment import EquipmentPipeline
 from .signatures import (
     AthleteAssessment,
     EnhancedCourseAnalyzer,
+    EquipmentStrategy,
     NutritionStrategy,
     PacingStrategy,
     RiskAssessment,
@@ -24,11 +26,13 @@ class RaceStrategyPipeline:
     def __init__(self):
         self.difficulty_calculator = DifficultyCalculator()
         self.nutrition_calculator = NutritionCalculator()
+        self.equipment_pipeline = EquipmentPipeline()
         self.enhanced_course_analyzer = dspy.ChainOfThought(EnhancedCourseAnalyzer)
         self.segment_analyzer = dspy.ChainOfThought(SegmentAnalyzer)
         self.athlete_assessor = dspy.ChainOfThought(AthleteAssessment)
         self.pacing_strategist = dspy.ChainOfThought(PacingStrategy)
         self.nutrition_strategist = dspy.ChainOfThought(NutritionStrategy)
+        self.equipment_strategist = dspy.ChainOfThought(EquipmentStrategy)
         self.risk_assessor = dspy.ChainOfThought(RiskAssessment)
         self.strategy_optimizer = dspy.ChainOfThought(StrategyOptimizer)
 
@@ -99,18 +103,29 @@ class RaceStrategyPipeline:
             f"Run: {pacing_strategy.run_strategy}",
         )
 
-        # Step 7: Assess risks with enhanced analysis and nutrition considerations
+        # Step 7: Generate equipment recommendations with integration to pacing
+        equipment_recommendations = self.equipment_pipeline.generate_equipment_recommendations(
+            course=course,
+            athlete=athlete,
+            conditions=conditions,
+            pacing_strategy=f"Swim: {pacing_strategy.swim_strategy}\n"
+            f"Bike: {pacing_strategy.bike_strategy}\n"
+            f"Run: {pacing_strategy.run_strategy}",
+        )
+
+        # Step 8: Assess risks with enhanced analysis, nutrition, and equipment considerations
         risk_assessment = self.risk_assessor(
             pacing_strategy=f"Swim: {pacing_strategy.swim_strategy}\n"
             f"Bike: {pacing_strategy.bike_strategy}\n"
             f"Run: {pacing_strategy.run_strategy}\n"
             f"Nutrition: {nutrition_strategy.hydration_plan}\n"
+            f"Equipment: {equipment_recommendations.bike_setup.gearing} gearing, {equipment_recommendations.bike_setup.wheels} wheels, {equipment_recommendations.swim_gear.wetsuit_decision} wetsuit\n"
             f"Course Difficulty: {difficulty_metrics.overall_rating}/10\n"
             f"Key Challenges: {enhanced_course_analysis.tactical_insights}",
             race_conditions=self._format_conditions_data(conditions),
         )
 
-        # Step 8: Optimize final strategy with all enhanced data including nutrition
+        # Step 9: Optimize final strategy with all enhanced data including nutrition and equipment
         final_strategy = self.strategy_optimizer(
             course_analysis=enhanced_course_analysis.strategic_analysis,
             athlete_assessment=athlete_assessment.strengths_vs_course,
@@ -121,6 +136,10 @@ class RaceStrategyPipeline:
             f"Fueling: {nutrition_strategy.fueling_schedule}\n"
             f"Electrolytes: {nutrition_strategy.electrolyte_strategy}\n"
             f"Integration: {nutrition_strategy.integration_guidance}",
+            equipment_strategy=f"Bike: {equipment_recommendations.bike_setup.gearing} gearing, {equipment_recommendations.bike_setup.wheels} wheels\n"
+            f"Swim: {equipment_recommendations.swim_gear.wetsuit_decision} wetsuit decision\n"
+            f"Run: {equipment_recommendations.run_equipment.shoes} shoes\n"
+            f"Performance Impact: {equipment_recommendations.performance_impact.time_savings_estimate}",
             risk_assessment=risk_assessment.mitigation_plan,
             target_time=athlete.target_finish_time or "Sub 6:00:00",
         )
@@ -132,6 +151,7 @@ class RaceStrategyPipeline:
             "athlete_assessment": athlete_assessment,
             "pacing_strategy": pacing_strategy,
             "nutrition_strategy": nutrition_strategy,
+            "equipment_recommendations": equipment_recommendations,
             "risk_assessment": risk_assessment,
             "final_strategy": final_strategy,
         }
