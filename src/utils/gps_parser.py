@@ -1,12 +1,13 @@
 # src/utils/gps_parser.py
-import gpxpy
-from geopy.distance import geodesic
-from typing import List, Optional, Dict
-from datetime import datetime
 import logging
 from dataclasses import dataclass
+from datetime import datetime
+from typing import Dict, List, Optional
 
-from ..models.course import CourseProfile, ClimbSegment, GPSPoint, GPSMetadata
+import gpxpy
+from geopy.distance import geodesic
+
+from ..models.course import ClimbSegment, CourseProfile, GPSMetadata, GPSPoint
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +86,7 @@ class GPSParser:
             ValueError: If GPX file is invalid or empty
         """
         try:
-            with open(file_path, "r", encoding="utf-8") as gpx_file:
+            with open(file_path, encoding="utf-8") as gpx_file:
                 gpx = gpxpy.parse(gpx_file)
         except FileNotFoundError:
             raise FileNotFoundError(f"GPX file not found: {file_path}")

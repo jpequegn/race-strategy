@@ -1,11 +1,11 @@
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.models.course import CourseProfile, ClimbSegment
 from src.models.athlete import AthleteProfile
 from src.models.conditions import RaceConditions
+from src.models.course import ClimbSegment, CourseProfile
 from src.pipelines.core_strategy import RaceStrategyPipeline
 from src.utils.config import setup_dspy_model
 from src.utils.course_loader import load_happy_valley_70_3

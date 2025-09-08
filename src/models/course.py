@@ -1,7 +1,7 @@
 # src/models/course.py
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Tuple
 from datetime import datetime
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass

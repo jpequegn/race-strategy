@@ -1,12 +1,13 @@
 # tests/test_gps_parser.py
-import pytest
-import tempfile
 import os
+import tempfile
 from datetime import datetime
 from unittest.mock import Mock
 
-from src.utils.gps_parser import GPSParser, GPSParserConfig
+import pytest
+
 from src.models.course import CourseProfile, GPSPoint
+from src.utils.gps_parser import GPSParser, GPSParserConfig
 
 
 class TestGPSParser:

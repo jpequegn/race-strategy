@@ -8,10 +8,10 @@ difficulty ratings.
 """
 
 from dataclasses import dataclass
-from typing import List, Dict
 from statistics import mean, stdev
+from typing import Dict, List
 
-from ..models.course import CourseProfile, ClimbSegment
+from ..models.course import ClimbSegment, CourseProfile
 
 
 @dataclass

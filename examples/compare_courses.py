@@ -15,15 +15,15 @@ Dependencies:
 
 import sys
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 # Add src directory to path for imports
 current_dir = Path(__file__).parent
 project_root = current_dir.parent
 sys.path.insert(0, str(project_root))
 
-from src.utils.gps_parser import GPSParser, GPSParserConfig
 from src.models.course import CourseProfile
+from src.utils.gps_parser import GPSParser, GPSParserConfig
 
 
 def main():
@@ -106,7 +106,7 @@ def print_course_summary_table(courses: List[Dict[str, Any]]):
     print(
         f"{'Course':<15} {'Distance':<10} {'Elevation':<12} {'Climbs':<8} {'Rating':<15}"
     )
-    print(f"{'='*15} {'='*10} {'='*12} {'='*8} {'='*15}")
+    print(f"{'=' * 15} {'=' * 10} {'=' * 12} {'=' * 8} {'=' * 15}")
 
     # Course data
     for course_data in courses:
@@ -162,7 +162,7 @@ def compare_difficulty_profiles(courses: List[Dict[str, Any]]):
     print(
         f"{'Course':<15} {'Elev/Mile':<10} {'Steepest':<10} {'Longest':<10} {'Biggest':<10} {'Altitude':<10}"
     )
-    print(f"{'='*15} {'='*10} {'='*10} {'='*10} {'='*10} {'='*10}")
+    print(f"{'=' * 15} {'=' * 10} {'=' * 10} {'=' * 10} {'=' * 10} {'=' * 10}")
 
     for m in metrics:
         name = f"{m['emoji']} {m['name']}"
@@ -277,7 +277,7 @@ def compare_data_quality(courses: List[Dict[str, Any]]):
     print(
         f"{'Course':<15} {'Points':<10} {'Quality':<10} {'Errors':<10} {'Missing':<10}"
     )
-    print(f"{'='*15} {'='*10} {'='*10} {'='*10} {'='*10}")
+    print(f"{'=' * 15} {'=' * 10} {'=' * 10} {'=' * 10} {'=' * 10}")
 
     for course_data in courses:
         course = course_data["profile"]
