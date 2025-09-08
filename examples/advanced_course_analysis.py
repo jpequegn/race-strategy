@@ -11,8 +11,8 @@ This example showcases:
 5. Comprehensive strategic insights using real course characteristics
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -20,18 +20,18 @@ from src.models.athlete import AthleteProfile
 from src.models.conditions import RaceConditions
 from src.pipelines.core_strategy import RaceStrategyPipeline
 from src.utils.config import setup_dspy_model
-from src.utils.course_loader import load_happy_valley_70_3_gps, load_alpe_dhuez_real
+from src.utils.course_loader import load_alpe_dhuez_real, load_happy_valley_70_3_gps
 
 
 def print_enhanced_analysis(course_name, results):
     """Pretty print the enhanced course analysis results"""
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"🚴 ENHANCED COURSE ANALYSIS: {course_name}")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     # Difficulty Metrics from Calculator
     diff_metrics = results["difficulty_metrics"]
-    print(f"\n📊 OBJECTIVE DIFFICULTY METRICS:")
+    print("\n📊 OBJECTIVE DIFFICULTY METRICS:")
     print(f"   Overall Rating: {diff_metrics.overall_rating}/10")
     print(f"   Elevation Intensity: {diff_metrics.elevation_intensity:.1f} ft/mile")
     print(f"   Average Gradient: {diff_metrics.avg_gradient:.1f}%")
@@ -44,20 +44,20 @@ def print_enhanced_analysis(course_name, results):
 
     # Enhanced Course Analysis
     course_analysis = results["enhanced_course_analysis"]
-    print(f"\n🧠 AI-ENHANCED STRATEGIC ANALYSIS:")
+    print("\n🧠 AI-ENHANCED STRATEGIC ANALYSIS:")
     print(f"   {course_analysis.strategic_analysis}")
 
-    print(f"\n🎯 POWER & PACING PLAN:")
+    print("\n🎯 POWER & PACING PLAN:")
     print(f"   {course_analysis.power_pacing_plan}")
 
-    print(f"\n📈 SEGMENT-BY-SEGMENT BREAKDOWN:")
+    print("\n📈 SEGMENT-BY-SEGMENT BREAKDOWN:")
     print(f"   {course_analysis.segment_analysis}")
 
-    print(f"\n💡 TACTICAL INSIGHTS:")
+    print("\n💡 TACTICAL INSIGHTS:")
     print(f"   {course_analysis.tactical_insights}")
 
     # Crux Segments Analysis
-    print(f"\n🎯 CRUX SEGMENTS (Most Critical Points):")
+    print("\n🎯 CRUX SEGMENTS (Most Critical Points):")
     for i, segment in enumerate(diff_metrics.crux_segments[:3], 1):
         print(f"\n   {i}. {segment['name']} - Mile {segment['start_mile']:.1f}")
         print(f"      • Distance: {segment['length_miles']:.1f} miles")
@@ -70,7 +70,7 @@ def print_enhanced_analysis(course_name, results):
 
     # Individual Segment Analysis
     if results["segment_analyses"]:
-        print(f"\n🔍 DETAILED SEGMENT ANALYSIS:")
+        print("\n🔍 DETAILED SEGMENT ANALYSIS:")
         for i, seg_analysis in enumerate(results["segment_analyses"][:3], 1):
             print(f"\n   Segment {i} Power Recommendation:")
             print(f"   {seg_analysis.power_recommendation}")
@@ -79,16 +79,16 @@ def print_enhanced_analysis(course_name, results):
 
     # Final Strategy with Enhanced Data
     final_strategy = results["final_strategy"]
-    print(f"\n🏆 FINAL ENHANCED STRATEGY:")
+    print("\n🏆 FINAL ENHANCED STRATEGY:")
     print(f"   {final_strategy.final_strategy}")
 
-    print(f"\n⏱️ TIME PREDICTION (Enhanced):")
+    print("\n⏱️ TIME PREDICTION (Enhanced):")
     print(f"   {final_strategy.time_prediction}")
 
-    print(f"\n📊 SUCCESS PROBABILITY:")
+    print("\n📊 SUCCESS PROBABILITY:")
     print(f"   {final_strategy.success_probability}")
 
-    print(f"\n🔑 KEY SUCCESS FACTORS:")
+    print("\n🔑 KEY SUCCESS FACTORS:")
     print(f"   {final_strategy.key_success_factors}")
 
 
@@ -201,38 +201,38 @@ def main():
             hv_difficulty = hv_results["difficulty_metrics"].overall_rating
             ad_difficulty = ad_results["difficulty_metrics"].overall_rating
 
-            print(f"\n📊 DIFFICULTY COMPARISON:")
+            print("\n📊 DIFFICULTY COMPARISON:")
             print(f"   Happy Valley 70.3: {hv_difficulty}/10 difficulty")
             print(f"   Alpe d'Huez: {ad_difficulty}/10 difficulty")
             print(f"   Difference: {ad_difficulty - hv_difficulty:.1f} points")
 
-            print(f"\n🎯 STRATEGIC DIFFERENCES:")
+            print("\n🎯 STRATEGIC DIFFERENCES:")
             hv_crux_count = len(hv_results["difficulty_metrics"].crux_segments)
             ad_crux_count = len(ad_results["difficulty_metrics"].crux_segments)
             print(f"   Happy Valley crux segments: {hv_crux_count}")
             print(f"   Alpe d'Huez crux segments: {ad_crux_count}")
 
-            print(f"\n💪 ATHLETE ADAPTATIONS:")
-            print(f"   Enhanced analysis shows how Elena's climbing strength")
+            print("\n💪 ATHLETE ADAPTATIONS:")
+            print("   Enhanced analysis shows how Elena's climbing strength")
             print(
                 f"   ({elite_athlete.climbing_ability}/10) aligns differently with each course"
             )
 
             if ad_difficulty > hv_difficulty:
-                print(f"\n✨ KEY FINDING:")
+                print("\n✨ KEY FINDING:")
                 print(
                     f"   Alpe d'Huez requires {ad_difficulty - hv_difficulty:.1f} points more difficulty management"
                 )
-                print(f"   Enhanced DSPy signatures identified specific power targets")
-                print(f"   and segment-specific tactics for each challenge level")
+                print("   Enhanced DSPy signatures identified specific power targets")
+                print("   and segment-specific tactics for each challenge level")
 
     except Exception as e:
         print(f"❌ Error in comparison: {e}")
 
     # Summary
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print("📋 ENHANCED ANALYSIS SUMMARY")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     print("\n✅ Successfully demonstrated Issue #13 requirements:")
     print("   1. ✅ Enhanced CourseAnalyzer signature with real elevation data")

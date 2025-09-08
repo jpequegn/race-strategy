@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from ..models.course import CourseProfile, ClimbSegment, AltitudeEffects
+from ..models.course import AltitudeEffects, ClimbSegment, CourseProfile
 
 
 def load_course_from_json(
@@ -41,7 +41,7 @@ def load_course_from_json(
         raise FileNotFoundError(f"Course JSON file not found: {json_path}")
 
     try:
-        with open(json_path, "r", encoding="utf-8") as f:
+        with open(json_path, encoding="utf-8") as f:
             course_data = json.load(f)
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in course file {json_path}: {e}")
@@ -58,9 +58,7 @@ def load_course_from_json(
 
     for field in required_fields:
         if field not in course_data:
-            raise ValueError(
-                f"Required field '{field}' missing from course JSON"
-            )
+            raise ValueError(f"Required field '{field}' missing from course JSON")
 
     # Convert key_climbs from dictionaries to ClimbSegment objects
     key_climbs = []
@@ -88,16 +86,10 @@ def load_course_from_json(
             base_altitude_ft=altitude_data.get("base_altitude_ft", 0),
             max_altitude_ft=altitude_data.get("max_altitude_ft", 0),
             altitude_zone=altitude_data.get("altitude_zone", "sea_level"),
-            oxygen_reduction_percent=altitude_data.get(
-                "oxygen_reduction_percent", 0.0
-            ),
+            oxygen_reduction_percent=altitude_data.get("oxygen_reduction_percent", 0.0),
             performance_impact=altitude_data.get("performance_impact", ""),
-            acclimatization_needed=altitude_data.get(
-                "acclimatization_needed", False
-            ),
-            hydration_multiplier=altitude_data.get(
-                "hydration_multiplier", 1.0
-            ),
+            acclimatization_needed=altitude_data.get("acclimatization_needed", False),
+            hydration_multiplier=altitude_data.get("hydration_multiplier", 1.0),
         )
 
     # Create CourseProfile object

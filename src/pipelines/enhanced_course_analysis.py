@@ -4,11 +4,12 @@ Enhanced course analysis pipeline integrating difficulty calculation
 with AI-powered strategic insights.
 """
 
-import dspy
 from typing import Dict, List, Optional
 
-from ..models.course import CourseProfile
+import dspy
+
 from ..models.athlete import AthleteProfile
+from ..models.course import CourseProfile
 from ..utils.course_analyzer import DifficultyCalculator, DifficultyMetrics
 
 

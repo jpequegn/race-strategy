@@ -14,18 +14,18 @@ Dependencies:
     - src.models.course
 """
 
+import math
 import sys
 from pathlib import Path
-from typing import List, Dict, Any
-import math
+from typing import Any, Dict, List
 
 # Add src directory to path for imports
 current_dir = Path(__file__).parent
 project_root = current_dir.parent
 sys.path.insert(0, str(project_root))
 
-from src.utils.gps_parser import GPSParser, GPSParserConfig
 from src.models.course import ClimbSegment
+from src.utils.gps_parser import GPSParser, GPSParserConfig
 
 
 def main():
@@ -236,13 +236,13 @@ def analyze_power_requirements(climbs: List[Dict[str, Any]]):
 
         print("    Power Requirements (70kg cyclist):")
         print(
-            f"      - Easy pace (recovery): {easy_power:.0f}W ({easy_power/70:.1f} W/kg)"
+            f"      - Easy pace (recovery): {easy_power:.0f}W ({easy_power / 70:.1f} W/kg)"
         )
         print(
-            f"      - Moderate pace (endurance): {moderate_power:.0f}W ({moderate_power/70:.1f} W/kg)"
+            f"      - Moderate pace (endurance): {moderate_power:.0f}W ({moderate_power / 70:.1f} W/kg)"
         )
         print(
-            f"      - Hard pace (tempo): {hard_power:.0f}W ({hard_power/70:.1f} W/kg)"
+            f"      - Hard pace (tempo): {hard_power:.0f}W ({hard_power / 70:.1f} W/kg)"
         )
 
         # Time estimates
