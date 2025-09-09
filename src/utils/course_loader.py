@@ -44,7 +44,7 @@ def load_course_from_json(
         with open(json_path, encoding="utf-8") as f:
             course_data = json.load(f)
     except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON in course file {json_path}: {e}")
+        raise ValueError(f"Invalid JSON in course file {json_path}: {e}") from e
 
     # Validate required fields
     required_fields = [

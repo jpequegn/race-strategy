@@ -398,11 +398,13 @@ class EquipmentDatabase:
             )
 
         # Check wetsuit in hot conditions
-        if recommendations.get("wetsuit_decision") == "wetsuit":
-            if conditions.temperature_f > 85:
-                warnings.append(
-                    "Warning: Wetsuit may not be legal in water temperature above 78°F"
-                )
+        if (
+            recommendations.get("wetsuit_decision") == "wetsuit"
+            and conditions.temperature_f > 85
+        ):
+            warnings.append(
+                "Warning: Wetsuit may not be legal in water temperature above 78°F"
+            )
 
         # Check minimal shoes for beginners
         if (

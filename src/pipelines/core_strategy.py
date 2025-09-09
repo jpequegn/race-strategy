@@ -212,7 +212,6 @@ Water Temp: {conditions.water_temp_f}°F
 
         # Create mile-by-mile elevation approximation from climb data
         total_miles = course.bike_distance_miles
-        current_elevation = 0
 
         for mile in range(int(total_miles) + 1):
             mile_float = float(mile)
@@ -325,7 +324,7 @@ FTP: {athlete.ftp_watts}W ({watts_per_kg})
 Climbing Ability: {climbing_strength}
 Experience Level: {athlete.experience_level}
 Relevant Strengths: {", ".join([s for s in athlete.strengths if s in ["bike", "climbing", "power"]])}
-Relevant Limiters: {", ".join([l for l in athlete.limiters if l in ["bike", "climbing", "hills", "endurance"]])}
+Relevant Limiters: {", ".join([lim for lim in athlete.limiters if lim in ["bike", "climbing", "hills", "endurance"]])}
 Segment Challenge Level: {"High" if segment["difficulty_score"] > 0.7 else "Moderate" if segment["difficulty_score"] > 0.4 else "Manageable"}
 """
 

@@ -141,9 +141,9 @@ class GPSParser:
             with open(file_path, encoding="utf-8") as gpx_file:
                 gpx = gpxpy.parse(gpx_file)
         except FileNotFoundError:
-            raise FileNotFoundError(f"GPX file not found: {file_path}")
+            raise FileNotFoundError(f"GPX file not found: {file_path}") from None
         except Exception as e:
-            raise ValueError(f"Invalid GPX file format: {e}")
+            raise ValueError(f"Invalid GPX file format: {e}") from e
 
         if not gpx.tracks:
             raise ValueError("No tracks found in GPX file")
@@ -440,11 +440,6 @@ class GPSParser:
         for i in range(1, len(gps_points)):
             if gps_points[i].gradient_percent is not None:
                 elevation_changes.append(abs(gps_points[i].gradient_percent))
-
-        # Calculate metrics
-        avg_elevation_variability = (
-            sum(elevation_changes) / len(elevation_changes) if elevation_changes else 0
-        )
 
         # Distance-based heuristics
         distance_factor = 0.0
