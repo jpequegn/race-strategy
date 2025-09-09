@@ -348,6 +348,131 @@ class TestEquipmentDatabase:
         )
         assert len(shoe_rationale) > 10
 
+    def test_extreme_temperatures(self):
+        """Test equipment recommendations for extreme temperatures"""
+        # Test extreme cold
+        extreme_cold = RaceConditions(
+            temperature_f=25,  # Below freezing
+            wind_speed_mph=10,
+            wind_direction="variable",
+            precipitation="none",
+            humidity_percent=40,
+        )
+
+        decision, wetsuit_type, _ = self.db.recommend_wetsuit_decision(
+            extreme_cold, self.athlete
+        )
+        assert decision == "wetsuit"
+        assert wetsuit_type == "full"
+
+        # Test extreme heat
+        extreme_hot = RaceConditions(
+            temperature_f=105,  # Above 100°F
+            wind_speed_mph=5,
+            wind_direction="variable",
+            precipitation="none",
+            humidity_percent=20,
+        )
+
+        decision, wetsuit_type, _ = self.db.recommend_wetsuit_decision(
+            extreme_hot, self.athlete
+        )
+        assert decision == "no-wetsuit"
+
+    def test_extreme_wind_conditions(self):
+        """Test equipment recommendations for extreme wind"""
+        extreme_wind = RaceConditions(
+            temperature_f=70,
+            wind_speed_mph=40,  # Extreme wind
+            wind_direction="crosswind",
+            precipitation="none",
+            humidity_percent=50,
+        )
+
+        wheels, rationale = self.db.recommend_wheels(self.flat_course, extreme_wind)
+        # Should not recommend aero wheels in extreme wind
+        assert wheels != "aero"
+        assert "wind" in rationale.lower()
+
+    def test_negative_wind_speed(self):
+        """Test handling of invalid negative wind speed"""
+        invalid_conditions = RaceConditions(
+            temperature_f=70,
+            wind_speed_mph=-10,  # Invalid negative wind
+            wind_direction="variable",
+            precipitation="none",
+            humidity_percent=50,
+        )
+
+        # Should handle gracefully without error
+        wheels, _ = self.db.recommend_wheels(self.flat_course, invalid_conditions)
+        assert wheels in ["aero", "climbing", "all-around"]
+
+    def test_missing_athlete_data(self):
+        """Test handling of missing athlete data fields"""
+        incomplete_athlete = AthleteProfile(
+            name="Incomplete",
+            ftp_watts=None,  # Missing FTP
+            swim_pace_per_100m=90,
+            run_threshold_pace=8,
+            experience_level="intermediate",
+            previous_70_3_time=None,
+            strengths=[],
+            limiters=[],
+            target_finish_time=None,
+            weight_lbs=150,
+            height_inches=68,
+            age=30,
+        )
+
+        # Should handle missing data gracefully
+        gearing, _ = self.db.recommend_bike_gearing(
+            self.flat_course, incomplete_athlete, self.calm_conditions
+        )
+        assert gearing in ["compact", "standard", "1x"]
+
+    def test_equipment_compatibility_validation(self):
+        """Test equipment compatibility validation"""
+        # Test aero wheels in extreme wind warning
+        recommendations = {
+            "wheels": "aero",
+            "wetsuit_decision": "wetsuit",
+            "shoes": "neutral",
+        }
+
+        extreme_wind = RaceConditions(
+            temperature_f=70,
+            wind_speed_mph=35,
+            wind_direction="crosswind",
+            precipitation="none",
+            humidity_percent=50,
+        )
+
+        warnings = self.db.validate_equipment_compatibility(
+            recommendations, extreme_wind
+        )
+        assert len(warnings) > 0
+        assert any("aero wheels" in w.lower() for w in warnings)
+
+    def test_zero_distance_course(self):
+        """Test handling of course with zero or missing distances"""
+        zero_distance_course = CourseProfile(
+            name="Zero Test",
+            bike_distance_miles=0,  # Zero distance
+            bike_elevation_gain_ft=0,
+            swim_distance_miles=1.2,
+            run_distance_miles=13.1,
+            run_elevation_gain_ft=300,
+            key_climbs=[],
+            technical_sections=[],
+            altitude_ft=100,
+        )
+
+        # Should handle zero distance gracefully
+        analysis = self.db.analyze_course_demands(zero_distance_course)
+        assert analysis["course_type"] == "flat_course"
+        assert float(analysis["elevation_per_mile"]) == 0
+
 
 class TestEquipmentPipeline:
     """Test equipment pipeline integration"""
@@ -541,3 +666,25 @@ class TestEquipmentPipeline:
             cold_recommendations.swim_gear.wetsuit_decision
             != hot_recommendations.swim_gear.wetsuit_decision
         )
+
+    def test_bike_position_recommendations(self):
+        """Test that bike position adapts to athlete and course"""
+        # Test beginner gets comfort position
+        beginner = AthleteProfile(
+            "Beginner", 200, 90, 8.5, "beginner", None, [], [], None, 170, 70, 25
+        )
+
+        beginner_recs = self.pipeline.generate_equipment_recommendations(
+            self.course, beginner, self.conditions
+        )
+        assert beginner_recs.bike_setup.position == "comfort"
+        assert "comfort" in beginner_recs.bike_setup.position_rationale.lower()
+
+        # Test advanced athlete on flat course gets aggressive position
+        flat_course = CourseProfile("Flat Test", 56, 500, 1.2, 13.1, 100, [], [], 0)
+
+        advanced_recs = self.pipeline.generate_equipment_recommendations(
+            flat_course, self.athlete, self.conditions  # self.athlete is advanced
+        )
+        assert advanced_recs.bike_setup.position == "aggressive"
+        assert "aggressive" in advanced_recs.bike_setup.position_rationale.lower()

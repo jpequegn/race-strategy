@@ -6,7 +6,7 @@ comprehensive equipment recommendations based on course, conditions, and athlete
 """
 
 import dspy
-from typing import Optional
+from typing import Optional, Tuple
 from ..models.athlete import AthleteProfile
 from ..models.conditions import RaceConditions
 from ..models.course import CourseProfile
@@ -192,6 +192,9 @@ Previous 70.3 Time: {athlete.previous_70_3_time or 'Not specified'}
         )
         shoes, _ = self.equipment_db.recommend_running_shoes(course, athlete)
 
+        # Determine bike position based on athlete and course
+        position, position_rationale = self._recommend_bike_position(athlete, course)
+
         # Bike setup
         bike_setup = BikeSetup(
             gearing=gearing,
@@ -202,8 +205,8 @@ Previous 70.3 Time: {athlete.previous_70_3_time or 'Not specified'}
             ),
             wheels=wheels,
             wheel_rationale=f"Optimal for course conditions and {conditions.wind_speed_mph} mph wind",
-            position="moderate",
-            position_rationale="Balanced comfort and aerodynamics for triathlon racing",
+            position=position,
+            position_rationale=position_rationale,
             accessories=["GPS computer", "Nutrition storage", "Basic tools"],
         )
 
@@ -286,3 +289,36 @@ Previous 70.3 Time: {athlete.previous_70_3_time or 'Not specified'}
             return "Moderate layers - tights/shorts, long sleeve, wind protection"
         else:
             return "Warm layers - tights, long sleeve, gloves, thermal protection"
+
+    def _recommend_bike_position(
+        self, athlete: AthleteProfile, course: CourseProfile
+    ) -> Tuple[str, str]:
+        """Recommend bike position based on athlete experience and course"""
+
+        # Analyze course demands
+        course_analysis = self.equipment_db.analyze_course_demands(course)
+
+        # Determine position based on experience and course
+        if athlete.experience_level == "beginner":
+            position = "comfort"
+            rationale = "Comfort position recommended for beginners - prioritizes control and sustainability"
+        elif (
+            athlete.experience_level == "advanced"
+            and course_analysis["course_type"] == "flat_course"
+        ):
+            position = "aggressive"
+            rationale = "Aggressive position for experienced athlete on flat course - maximizes aerodynamics"
+        elif (
+            athlete.experience_level == "advanced"
+            and course_analysis["climbing_demand"] == "high"
+        ):
+            position = "moderate"
+            rationale = "Moderate position for climbing - balances power output and aerodynamics"
+        elif "bike" in athlete.strengths:
+            position = "aggressive"
+            rationale = "Aggressive position leverages bike strength - optimizes power and aerodynamics"
+        else:
+            position = "moderate"
+            rationale = "Moderate position for balanced comfort and aerodynamics throughout race"
+
+        return position, rationale

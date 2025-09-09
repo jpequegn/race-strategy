@@ -5,11 +5,36 @@ Provides equipment catalog, decision matrices, and cost-benefit analysis
 for triathlon equipment selection based on course, conditions, and athlete profile.
 """
 
-from typing import Dict, List, Tuple
-import math
+from typing import Dict, List, Tuple, Optional
+import logging
 from ..models.athlete import AthleteProfile
 from ..models.conditions import RaceConditions
 from ..models.course import CourseProfile
+
+# Wind thresholds (mph)
+WIND_THRESHOLD_MODERATE = 15  # Threshold for considering wind conditions
+WIND_THRESHOLD_STRONG = 25  # Threshold for strong wind (safety concern)
+WIND_THRESHOLD_EXTREME = 30  # Extreme wind conditions
+
+# Elevation thresholds (ft/mile)
+ELEVATION_THRESHOLD_FLAT = 30  # Below this is considered flat
+ELEVATION_THRESHOLD_ROLLING = 60  # Between flat and mountainous
+
+# Temperature thresholds (°F)
+TEMP_THRESHOLD_COLD = 32  # Freezing point
+TEMP_THRESHOLD_HOT = 100  # Extreme heat
+WATER_TEMP_OFFSET = 10  # Default water temp offset from air temp
+
+# Performance thresholds
+FTP_THRESHOLD_STRONG = 300  # Watts - threshold for strong cyclist
+DEFAULT_BIKE_SPEED = 20  # mph - assumed average speed for calculations
+
+# Scoring adjustments
+BEGINNER_GEARING_BONUS = 0.2  # Bonus for easier gearing for beginners
+STRONG_CYCLIST_BONUS = 0.1  # Bonus for standard gearing for strong cyclists
+WIND_AERO_PENALTY = 0.3  # Penalty for aero wheels in strong wind
+
+logger = logging.getLogger(__name__)
 
 
 class EquipmentDatabase:
@@ -41,19 +66,20 @@ class EquipmentDatabase:
     def analyze_course_demands(self, course: CourseProfile) -> Dict[str, str]:
         """Analyze course characteristics to determine equipment needs"""
 
-        # Calculate elevation intensity
-        if hasattr(course, "bike_distance_miles") and course.bike_distance_miles > 0:
+        # Calculate elevation intensity with robust error handling
+        try:
             elevation_per_mile = (
                 course.bike_elevation_gain_ft / course.bike_distance_miles
             )
-        else:
+        except (AttributeError, ZeroDivisionError, TypeError) as e:
+            logger.warning(f"Could not calculate elevation per mile: {e}")
             elevation_per_mile = 0
 
-        # Classify course type
-        if elevation_per_mile < 30:
+        # Classify course type using constants
+        if elevation_per_mile < ELEVATION_THRESHOLD_FLAT:
             course_type = "flat_course"
             climbing_demand = "low"
-        elif elevation_per_mile < 60:
+        elif elevation_per_mile < ELEVATION_THRESHOLD_ROLLING:
             course_type = "rolling_course"
             climbing_demand = "moderate"
         else:
@@ -85,12 +111,12 @@ class EquipmentDatabase:
             course_type, self.bike_gearing_matrix["rolling_course"]
         )
 
-        # Athlete adjustments
+        # Athlete adjustments using constants
         if athlete.experience_level == "beginner":
-            gearing_scores["compact"] += 0.2  # Beginners benefit from easier gearing
+            gearing_scores["compact"] += BEGINNER_GEARING_BONUS
 
-        if athlete.ftp_watts > 300:  # Strong cyclists can handle standard gearing
-            gearing_scores["standard"] += 0.1
+        if athlete.ftp_watts and athlete.ftp_watts > FTP_THRESHOLD_STRONG:
+            gearing_scores["standard"] += STRONG_CYCLIST_BONUS
 
         # Select best option
         best_gearing = max(gearing_scores.items(), key=lambda x: x[1])
@@ -109,13 +135,16 @@ class EquipmentDatabase:
 
         course_analysis = self.analyze_course_demands(course)
 
-        # Determine conditions category
+        # Validate wind speed input
+        wind_speed = self._validate_wind_speed(conditions.wind_speed_mph)
+
+        # Determine conditions category using constants
         if course_analysis["climbing_demand"] == "high":
-            if conditions.wind_speed_mph > 15:
+            if wind_speed > WIND_THRESHOLD_MODERATE:
                 condition_key = "hilly_windy"
             else:
                 condition_key = "hilly_calm"
-        elif conditions.wind_speed_mph > 15:  # Changed threshold for windy conditions
+        elif wind_speed > WIND_THRESHOLD_MODERATE:
             condition_key = "flat_windy"
         else:
             condition_key = "mixed_conditions"
@@ -123,13 +152,11 @@ class EquipmentDatabase:
         # Get wheel scores (use mixed_conditions if key not found)
         wheel_scores = self.wheel_matrix.get(
             condition_key, self.wheel_matrix["mixed_conditions"]
-        )
+        ).copy()  # Use copy to avoid modifying original
 
-        # Wind adjustments
-        if conditions.wind_speed_mph >= 25:
-            wheel_scores[
-                "aero"
-            ] -= 0.3  # Strong crosswinds make aero wheels harder to handle
+        # Wind adjustments using constants
+        if wind_speed >= WIND_THRESHOLD_STRONG:
+            wheel_scores["aero"] -= WIND_AERO_PENALTY
 
         best_wheels = max(wheel_scores.items(), key=lambda x: x[1])
 
@@ -140,53 +167,53 @@ class EquipmentDatabase:
         return best_wheels[0], rationale
 
     def recommend_wetsuit_decision(
-        self, conditions: RaceConditions, athlete: AthleteProfile
+        self,
+        conditions: RaceConditions,
+        athlete: AthleteProfile,
+        water_temp_offset: Optional[float] = None,
     ) -> Tuple[str, str, str]:
         """Recommend wetsuit decision based on water temperature and athlete"""
 
-        # Assume water temp is close to air temp if not specified
-        # In reality, this would come from race-specific data
-        estimated_water_temp = conditions.temperature_f - 10  # Rough estimate
+        # Validate temperature and estimate water temp
+        air_temp = self._validate_temperature(conditions.temperature_f)
+        offset = (
+            water_temp_offset if water_temp_offset is not None else WATER_TEMP_OFFSET
+        )
+        estimated_water_temp = air_temp - offset
 
-        decision = "depends-on-temp"
-        wetsuit_type = None
-
-        if (
-            estimated_water_temp
-            <= self.wetsuit_temperature_thresholds["definitely_wetsuit"]
-        ):
-            decision = "wetsuit"
-            wetsuit_type = "full"
-        elif (
-            estimated_water_temp
-            <= self.wetsuit_temperature_thresholds["probably_wetsuit"]
-        ):
-            decision = "wetsuit"
-            wetsuit_type = (
-                "full" if athlete.experience_level == "beginner" else "sleeveless"
-            )
-        elif (
-            estimated_water_temp
-            <= self.wetsuit_temperature_thresholds["athlete_choice"]
-        ):
-            if athlete.experience_level == "beginner" or "swim" in athlete.limiters:
-                decision = "wetsuit"
-                wetsuit_type = "sleeveless"
-            else:
-                decision = "no-wetsuit"
-        elif (
-            estimated_water_temp
-            <= self.wetsuit_temperature_thresholds["probably_no_wetsuit"]
-        ):
-            decision = "no-wetsuit"
-        else:
-            decision = "no-wetsuit"
+        # Use helper method to determine wetsuit by temperature
+        decision, wetsuit_type = self._determine_wetsuit_by_temperature(
+            estimated_water_temp, athlete
+        )
 
         rationale = self._generate_wetsuit_rationale(
             decision, estimated_water_temp, athlete
         )
 
         return decision, wetsuit_type or "none", rationale
+
+    def _determine_wetsuit_by_temperature(
+        self, water_temp: float, athlete: AthleteProfile
+    ) -> Tuple[str, Optional[str]]:
+        """Helper method to determine wetsuit decision by temperature"""
+        thresholds = self.wetsuit_temperature_thresholds
+
+        if water_temp <= thresholds["definitely_wetsuit"]:
+            return "wetsuit", "full"
+        elif water_temp <= thresholds["probably_wetsuit"]:
+            wetsuit_type = (
+                "full" if athlete.experience_level == "beginner" else "sleeveless"
+            )
+            return "wetsuit", wetsuit_type
+        elif water_temp <= thresholds["athlete_choice"]:
+            if athlete.experience_level == "beginner" or "swim" in athlete.limiters:
+                return "wetsuit", "sleeveless"
+            else:
+                return "no-wetsuit", None
+        elif water_temp <= thresholds["probably_no_wetsuit"]:
+            return "no-wetsuit", None
+        else:
+            return "no-wetsuit", None
 
     def recommend_running_shoes(
         self, course: CourseProfile, athlete: AthleteProfile
@@ -221,10 +248,12 @@ class EquipmentDatabase:
 
         # Aero wheels on flat course
         if equipment_changes.get("wheels") == "aero":
-            if hasattr(course, "bike_distance_miles"):
+            try:
                 # Rough estimate: 30-60 seconds per hour for aero wheels
-                bike_hours = course.bike_distance_miles / 20  # Assume ~20mph average
+                bike_hours = course.bike_distance_miles / DEFAULT_BIKE_SPEED
                 total_seconds_saved += bike_hours * 45
+            except (AttributeError, TypeError):
+                logger.warning("Could not calculate aero wheel time savings")
 
         # Optimal gearing
         if equipment_changes.get("gearing") == "compact":
@@ -276,12 +305,11 @@ class EquipmentDatabase:
         base_rationale = rationales.get(wheels, "Optimal wheels for course conditions")
 
         # Add wind context for all-around wheels in windy conditions
-        if wheels == "all-around" and conditions.wind_speed_mph >= 25:
-            base_rationale += (
-                f" - safer choice in strong {conditions.wind_speed_mph} mph wind"
-            )
-        elif wheels == "all-around" and conditions.wind_speed_mph > 15:
-            base_rationale += f" for {conditions.wind_speed_mph} mph wind conditions"
+        wind_speed = self._validate_wind_speed(conditions.wind_speed_mph)
+        if wheels == "all-around" and wind_speed >= WIND_THRESHOLD_STRONG:
+            base_rationale += f" - safer choice in strong {wind_speed} mph wind"
+        elif wheels == "all-around" and wind_speed > WIND_THRESHOLD_MODERATE:
+            base_rationale += f" for {wind_speed} mph wind conditions"
 
         return base_rationale
 
@@ -321,3 +349,67 @@ class EquipmentDatabase:
             base_rationale += ". Extra support addresses running limiter."
 
         return base_rationale
+
+    # Validation methods
+    def _validate_wind_speed(self, wind_speed: float) -> float:
+        """Validate and constrain wind speed to realistic bounds"""
+        if wind_speed is None:
+            return 0
+        if wind_speed < 0:
+            logger.warning(f"Negative wind speed {wind_speed}, using 0")
+            return 0
+        if wind_speed > 100:
+            logger.warning(f"Extreme wind speed {wind_speed}, capping at 100")
+            return 100
+        return wind_speed
+
+    def _validate_temperature(self, temperature: float) -> float:
+        """Validate and constrain temperature to realistic bounds"""
+        if temperature is None:
+            logger.warning("No temperature provided, using 70°F default")
+            return 70
+        if temperature < TEMP_THRESHOLD_COLD:
+            logger.warning(
+                f"Extreme cold {temperature}°F, using {TEMP_THRESHOLD_COLD}°F"
+            )
+            return TEMP_THRESHOLD_COLD
+        if temperature > TEMP_THRESHOLD_HOT:
+            logger.warning(
+                f"Extreme heat {temperature}°F, using {TEMP_THRESHOLD_HOT}°F"
+            )
+            return TEMP_THRESHOLD_HOT
+        return temperature
+
+    def validate_equipment_compatibility(
+        self, recommendations: Dict[str, str], conditions: RaceConditions
+    ) -> List[str]:
+        """Validate equipment combinations for compatibility issues"""
+        warnings = []
+        wind_speed = self._validate_wind_speed(conditions.wind_speed_mph)
+
+        # Check aero wheels in extreme wind
+        if (
+            recommendations.get("wheels") == "aero"
+            and wind_speed > WIND_THRESHOLD_EXTREME
+        ):
+            warnings.append(
+                f"Warning: Aero wheels not recommended in extreme wind ({wind_speed} mph)"
+            )
+
+        # Check wetsuit in hot conditions
+        if recommendations.get("wetsuit_decision") == "wetsuit":
+            if conditions.temperature_f > 85:
+                warnings.append(
+                    "Warning: Wetsuit may not be legal in water temperature above 78°F"
+                )
+
+        # Check minimal shoes for beginners
+        if (
+            recommendations.get("shoes") == "minimal"
+            and recommendations.get("experience_level") == "beginner"
+        ):
+            warnings.append(
+                "Warning: Minimal shoes not recommended for beginner athletes"
+            )
+
+        return warnings
