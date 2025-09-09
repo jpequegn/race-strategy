@@ -91,7 +91,7 @@ def load_course_from_json(
             acclimatization_needed=altitude_data.get("acclimatization_needed", False),
             hydration_multiplier=altitude_data.get("hydration_multiplier", 1.0),
         )
-        
+
     # Convert elevation_profile from dictionaries to GPSPoint objects
     elevation_profile = []
     if "elevation_profile" in course_data and course_data["elevation_profile"]:
@@ -101,7 +101,7 @@ def load_course_from_json(
                 longitude=0.0,
                 elevation_ft=point_data.get("elevation_ft", 0.0),
                 distance_miles=point_data.get("distance_miles", 0.0),
-                gradient_percent=point_data.get("gradient_percent")
+                gradient_percent=point_data.get("gradient_percent"),
             )
             elevation_profile.append(point)
 

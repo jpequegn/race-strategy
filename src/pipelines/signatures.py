@@ -152,6 +152,42 @@ class NutritionStrategy(dspy.Signature):
     )
 
 
+class EquipmentStrategy(dspy.Signature):
+    """Optimize equipment selection for race conditions"""
+
+    course_profile: str = dspy.InputField(
+        desc="Elevation, technical sections, surface conditions, and distance"
+    )
+    race_conditions: str = dspy.InputField(
+        desc="Weather, water temperature, wind, and race logistics"
+    )
+    athlete_profile: str = dspy.InputField(
+        desc="Power, budget, experience level, and equipment preferences"
+    )
+    equipment_analysis: str = dspy.InputField(
+        desc="Technical equipment recommendations from database analysis"
+    )
+    pacing_strategy: str = dspy.InputField(
+        desc="Race pacing plan to optimize equipment choices"
+    )
+
+    bike_setup: str = dspy.OutputField(
+        desc="Gearing, wheels, position recommendations with rationale"
+    )
+    swim_gear: str = dspy.OutputField(
+        desc="Wetsuit, goggles, accessories with decision rationale"
+    )
+    run_equipment: str = dspy.OutputField(
+        desc="Shoes, clothing, accessories with performance rationale"
+    )
+    performance_impact: str = dspy.OutputField(
+        desc="Expected time savings, costs, and priority ranking of changes"
+    )
+    integration_guidance: str = dspy.OutputField(
+        desc="How equipment choices integrate with pacing and race strategy"
+    )
+
+
 class StrategyOptimizer(dspy.Signature):
     """Synthesize all analysis into final race strategy with time predictions"""
 
@@ -160,6 +196,9 @@ class StrategyOptimizer(dspy.Signature):
     pacing_strategy: str = dspy.InputField()
     risk_assessment: str = dspy.InputField()
     nutrition_strategy: str = dspy.InputField(desc="Hydration and fueling plan")
+    equipment_strategy: str = dspy.InputField(
+        desc="Equipment recommendations and setup"
+    )
     target_time: str = dspy.InputField(desc="Athlete's target finish time")
 
     final_strategy: str = dspy.OutputField(desc="Complete race execution plan")
