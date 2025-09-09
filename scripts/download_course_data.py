@@ -52,7 +52,7 @@ def download_gpx_from_ridewithgps(route_id: str, output_path: str = None) -> str
         return output_path
 
     except requests.RequestException as e:
-        raise Exception(f"Failed to download GPX file: {e}")
+        raise Exception(f"Failed to download GPX file: {e}") from e
 
 
 def parse_gpx_to_course_profile(
@@ -86,7 +86,7 @@ def parse_gpx_to_course_profile(
         return course_profile
 
     except Exception as e:
-        raise Exception(f"Failed to parse GPX file: {e}")
+        raise Exception(f"Failed to parse GPX file: {e}") from e
 
 
 def course_profile_to_json_dict(course_profile: CourseProfile) -> dict:

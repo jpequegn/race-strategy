@@ -469,36 +469,38 @@ class DataValidator:
             return results
 
         # Check for large distance jumps
-        large_jumps = []
-        if hasattr(course, "gps_metadata") and course.gps_metadata:
-            if hasattr(course.gps_metadata, "large_distance_jumps"):
-                jump_count = course.gps_metadata.large_distance_jumps
-                if jump_count > 0:
-                    large_jumps_per_mile = jump_count / course.bike_distance_miles
+        if (
+            hasattr(course, "gps_metadata")
+            and course.gps_metadata
+            and hasattr(course.gps_metadata, "large_distance_jumps")
+        ):
+            jump_count = course.gps_metadata.large_distance_jumps
+            if jump_count > 0:
+                large_jumps_per_mile = jump_count / course.bike_distance_miles
 
-                    if large_jumps_per_mile > 0.5:  # More than 1 jump per 2 miles
-                        results.append(
-                            ValidationResult(
-                                check_name="GPS Point Continuity",
-                                passed=False,
-                                severity="warning",
-                                message=f"High number of large distance jumps: {jump_count} ({large_jumps_per_mile:.1f} per mile)",
-                                details={
-                                    "jump_count": jump_count,
-                                    "jumps_per_mile": large_jumps_per_mile,
-                                },
-                                suggested_fix="Review GPS track for signal loss or tracking errors",
-                            )
+                if large_jumps_per_mile > 0.5:  # More than 1 jump per 2 miles
+                    results.append(
+                        ValidationResult(
+                            check_name="GPS Point Continuity",
+                            passed=False,
+                            severity="warning",
+                            message=f"High number of large distance jumps: {jump_count} ({large_jumps_per_mile:.1f} per mile)",
+                            details={
+                                "jump_count": jump_count,
+                                "jumps_per_mile": large_jumps_per_mile,
+                            },
+                            suggested_fix="Review GPS track for signal loss or tracking errors",
                         )
-                    else:
-                        results.append(
-                            ValidationResult(
-                                check_name="GPS Point Continuity",
-                                passed=True,
-                                severity="info",
-                                message=f"Acceptable number of distance jumps: {jump_count}",
-                            )
+                    )
+                else:
+                    results.append(
+                        ValidationResult(
+                            check_name="GPS Point Continuity",
+                            passed=True,
+                            severity="info",
+                            message=f"Acceptable number of distance jumps: {jump_count}",
                         )
+                    )
 
         results.append(
             ValidationResult(
