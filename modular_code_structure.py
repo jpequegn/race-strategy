@@ -1,6 +1,6 @@
 # src/models/course.py
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import Dict, List
 
 
 @dataclass
@@ -169,14 +169,16 @@ class StrategyOptimizer(dspy.Signature):
 
 # ====================
 # src/pipelines/core_strategy.py
+from typing import Any
+
 import dspy
-from typing import Dict, Any
-from ..models.course import CourseProfile
+
 from ..models.athlete import AthleteProfile
 from ..models.conditions import RaceConditions
+from ..models.course import CourseProfile
 from .signatures import (
-    CourseAnalyzer,
     AthleteAssessment,
+    CourseAnalyzer,
     PacingStrategy,
     RiskAssessment,
     StrategyOptimizer,
@@ -296,8 +298,9 @@ Water Temp: {conditions.water_temp_f}°F
 # ====================
 # src/utils/config.py
 import os
-from dotenv import load_dotenv
+
 import dspy
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -324,13 +327,12 @@ def setup_dspy_model():
 # ====================
 # examples/basic_demo.py
 import sys
-import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.models.course import CourseProfile, ClimbSegment
 from src.models.athlete import AthleteProfile
 from src.models.conditions import RaceConditions
+from src.models.course import ClimbSegment, CourseProfile
 from src.pipelines.core_strategy import RaceStrategyPipeline
 from src.utils.config import setup_dspy_model
 

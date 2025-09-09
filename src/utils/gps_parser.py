@@ -13,6 +13,50 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class ActivityConfig:
+    """Configuration class for activity-specific parameters"""
+
+    activity_type: str  # "cycling", "running", "mixed"
+    min_climb_grade: float
+    min_climb_distance: float
+    avg_speed_threshold: float  # for auto-detection (mph)
+    technical_descent_threshold: float
+
+    @classmethod
+    def get_cycling_config(cls) -> "ActivityConfig":
+        """Get configuration optimized for cycling activities"""
+        return cls(
+            activity_type="cycling",
+            min_climb_grade=3.0,
+            min_climb_distance=0.5,
+            avg_speed_threshold=8.0,  # >8mph suggests cycling
+            technical_descent_threshold=-8.0,
+        )
+
+    @classmethod
+    def get_running_config(cls) -> "ActivityConfig":
+        """Get configuration optimized for running activities"""
+        return cls(
+            activity_type="running",
+            min_climb_grade=2.0,  # Runners more sensitive to grade
+            min_climb_distance=0.2,  # Shorter climbs matter for runners
+            avg_speed_threshold=8.0,  # <8mph suggests running
+            technical_descent_threshold=-5.0,  # Less steep threshold for runners
+        )
+
+    @classmethod
+    def get_mixed_config(cls) -> "ActivityConfig":
+        """Get configuration for mixed activities (triathlon)"""
+        return cls(
+            activity_type="mixed",
+            min_climb_grade=2.5,  # Balanced between cycling and running
+            min_climb_distance=0.3,  # Balanced minimum distance
+            avg_speed_threshold=8.0,  # Used for detection logic
+            technical_descent_threshold=-6.5,  # Balanced threshold
+        )
+
+
+@dataclass
 class GPSParserConfig:
     """Configuration class for GPS parser parameters"""
 
@@ -45,6 +89,8 @@ class GPSParser:
     def __init__(
         self,
         config: Optional[GPSParserConfig] = None,
+        activity_config: Optional[ActivityConfig] = None,
+        activity_type: Optional[str] = None,
         min_climb_grade: Optional[float] = None,
         min_climb_distance: Optional[float] = None,
     ):
@@ -53,6 +99,8 @@ class GPSParser:
 
         Args:
             config: GPSParserConfig instance with all parameters (preferred method)
+            activity_config: ActivityConfig instance for activity-specific parameters
+            activity_type: Manual override for activity type ("cycling", "running", "mixed")
             min_climb_grade: Minimum grade percentage to consider a climb (deprecated, use config)
             min_climb_distance: Minimum distance in miles for a climb segment (deprecated, use config)
         """
@@ -70,6 +118,10 @@ class GPSParser:
         # Keep these attributes for backward compatibility
         self.min_climb_grade = self.config.min_climb_grade
         self.min_climb_distance = self.config.min_climb_distance
+
+        # Activity type configuration
+        self.activity_config = activity_config
+        self.manual_activity_type = activity_type
 
     def parse_gpx_file(self, file_path: str) -> CourseProfile:
         """
@@ -110,10 +162,28 @@ class GPSParser:
         # Convert to GPS points with distance and elevation calculations
         gps_points = self._process_track_points(track_points)
 
+        # Detect or use manual activity type
+        if self.manual_activity_type:
+            activity_type = self.manual_activity_type
+            activity_confidence = 1.0  # Full confidence for manual override
+        else:
+            activity_type, activity_confidence = self._detect_activity_type(gps_points)
+
+        # Get activity-specific configuration
+        if not self.activity_config:
+            self.activity_config = self._get_activity_specific_config(activity_type)
+
+        # Update parser configuration with activity-specific parameters
+        original_climb_grade = self.min_climb_grade
+        original_climb_distance = self.min_climb_distance
+
+        self.min_climb_grade = self.activity_config.min_climb_grade
+        self.min_climb_distance = self.activity_config.min_climb_distance
+
         # Generate metadata
         metadata = self._generate_metadata(file_path, gps_points, track_points)
 
-        # Detect climbs
+        # Detect climbs using activity-specific parameters
         climbs = self._detect_climbs(gps_points)
 
         # Create course profile
@@ -125,15 +195,33 @@ class GPSParser:
         total_distance = gps_points[-1].distance_miles if gps_points else 0
         total_elevation_gain = self._calculate_total_elevation_gain(gps_points)
 
+        # Assign distance and elevation based on activity type
+        bike_distance = total_distance if activity_type in ["cycling", "mixed"] else 0.0
+        bike_elevation = (
+            int(total_elevation_gain) if activity_type in ["cycling", "mixed"] else 0
+        )
+        run_distance = total_distance if activity_type in ["running", "mixed"] else 0.0
+        run_elevation = (
+            int(total_elevation_gain) if activity_type in ["running", "mixed"] else 0
+        )
+
+        # Restore original configuration for backward compatibility
+        self.min_climb_grade = original_climb_grade
+        self.min_climb_distance = original_climb_distance
+
         return CourseProfile(
             name=course_name,
-            bike_distance_miles=total_distance,
-            bike_elevation_gain_ft=int(total_elevation_gain),
+            bike_distance_miles=bike_distance,
+            bike_elevation_gain_ft=bike_elevation,
             swim_distance_miles=0.0,  # GPX typically doesn't include swim
-            run_distance_miles=0.0,  # Assuming bike course, can be extended
-            run_elevation_gain_ft=0,
+            run_distance_miles=run_distance,
+            run_elevation_gain_ft=run_elevation,
+            activity_type=activity_type,
+            activity_confidence=activity_confidence,
             key_climbs=climbs,
-            technical_sections=self._identify_technical_sections(gps_points),
+            technical_sections=self._identify_technical_sections(
+                gps_points, self.activity_config
+            ),
             gps_metadata=metadata,
             elevation_profile=gps_points,
             start_coords=(
@@ -324,6 +412,94 @@ class GPSParser:
 
         return climbs
 
+    def _detect_activity_type(self, gps_points: List[GPSPoint]) -> tuple[str, float]:
+        """
+        Detect activity type based on GPS data characteristics
+
+        Args:
+            gps_points: List of GPS points with calculated distances and speeds
+
+        Returns:
+            tuple of (activity_type, confidence) where confidence is 0.0-1.0
+        """
+        if not gps_points or len(gps_points) < 2:
+            return "cycling", 0.0  # Default to cycling with low confidence
+
+        # Calculate average speed
+        total_distance = gps_points[-1].distance_miles
+
+        # Estimate time based on point density (assuming 1 point per second on average)
+        estimated_time_hours = len(gps_points) / 3600  # Convert seconds to hours
+        if estimated_time_hours == 0:
+            return "cycling", 0.0
+
+        avg_speed_mph = total_distance / estimated_time_hours
+
+        # Analyze elevation change patterns
+        elevation_changes = []
+        for i in range(1, len(gps_points)):
+            if gps_points[i].gradient_percent is not None:
+                elevation_changes.append(abs(gps_points[i].gradient_percent))
+
+        # Calculate metrics
+        avg_elevation_variability = (
+            sum(elevation_changes) / len(elevation_changes) if elevation_changes else 0
+        )
+
+        # Distance-based heuristics
+        distance_factor = 0.0
+        if total_distance > 50:  # Very long distances suggest cycling
+            distance_factor = 0.3
+        elif total_distance > 20:  # Moderate distances are ambiguous
+            distance_factor = 0.0
+        else:  # Short distances might suggest running
+            distance_factor = -0.2
+
+        # Speed-based classification with confidence scoring
+        speed_confidence = 0.0
+        activity_type = "cycling"
+
+        if avg_speed_mph >= 15:
+            # High speed strongly suggests cycling
+            activity_type = "cycling"
+            speed_confidence = min(0.9, 0.5 + (avg_speed_mph - 15) * 0.05)
+        elif avg_speed_mph >= 12:
+            # Moderate-high speed likely cycling
+            activity_type = "cycling"
+            speed_confidence = 0.7
+        elif avg_speed_mph <= 6:
+            # Low speed suggests running
+            activity_type = "running"
+            speed_confidence = min(0.8, 0.4 + (8 - avg_speed_mph) * 0.1)
+        elif avg_speed_mph <= 8:
+            # Moderate-low speed likely running
+            activity_type = "running"
+            speed_confidence = 0.6
+        else:
+            # Ambiguous speed range (8-12 mph)
+            activity_type = "cycling"  # Default to cycling
+            speed_confidence = 0.3
+
+        # Adjust confidence based on distance
+        final_confidence = max(0.1, min(0.95, speed_confidence + distance_factor))
+
+        logger.info(
+            f"Activity detection: avg_speed={avg_speed_mph:.1f}mph, "
+            f"distance={total_distance:.1f}mi, "
+            f"detected={activity_type}, confidence={final_confidence:.2f}"
+        )
+
+        return activity_type, final_confidence
+
+    def _get_activity_specific_config(self, activity_type: str) -> ActivityConfig:
+        """Get activity-specific configuration based on detected/manual activity type"""
+        if activity_type == "running":
+            return ActivityConfig.get_running_config()
+        elif activity_type == "mixed":
+            return ActivityConfig.get_mixed_config()
+        else:  # Default to cycling
+            return ActivityConfig.get_cycling_config()
+
     def _calculate_total_elevation_gain(self, gps_points: List[GPSPoint]) -> float:
         """Calculate total elevation gain from GPS points"""
         total_gain = 0.0
@@ -335,12 +511,20 @@ class GPSParser:
 
         return total_gain
 
-    def _identify_technical_sections(self, gps_points: List[GPSPoint]) -> List[str]:
+    def _identify_technical_sections(
+        self,
+        gps_points: List[GPSPoint],
+        activity_config: Optional[ActivityConfig] = None,
+    ) -> List[str]:
         """Identify technical sections like sharp turns or steep descents"""
         technical_sections = []
 
-        # Look for steep descents using config parameters
-        descent_threshold = self.config.descent_threshold
+        # Use activity-specific thresholds if available
+        if activity_config:
+            descent_threshold = activity_config.technical_descent_threshold
+        else:
+            descent_threshold = self.config.descent_threshold
+
         min_descent_length = self.config.min_descent_length
 
         for i in range(len(gps_points)):

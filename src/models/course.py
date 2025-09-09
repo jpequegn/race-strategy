@@ -79,6 +79,10 @@ class CourseProfile:
     surface_types: List[str] = None
     altitude_ft: int = 0
 
+    # Activity type information
+    activity_type: Optional[str] = None  # "cycling", "running", "mixed"
+    activity_confidence: float = 0.0  # 0.0-1.0 confidence in detection
+
     # Altitude effects metadata
     altitude_effects: Optional[AltitudeEffects] = None
 
@@ -87,3 +91,25 @@ class CourseProfile:
     elevation_profile: List[GPSPoint] = field(default_factory=list)
     start_coords: Optional[Tuple[float, float]] = None
     finish_coords: Optional[Tuple[float, float]] = None
+
+    @property
+    def distance_miles(self) -> float:
+        """Get the primary distance based on activity type"""
+        if self.activity_type == "running":
+            return self.run_distance_miles
+        elif self.activity_type == "cycling":
+            return self.bike_distance_miles
+        else:
+            # For mixed or unknown, return the larger of the two
+            return max(self.bike_distance_miles, self.run_distance_miles)
+
+    @property
+    def elevation_gain_ft(self) -> int:
+        """Get the primary elevation gain based on activity type"""
+        if self.activity_type == "running":
+            return self.run_elevation_gain_ft
+        elif self.activity_type == "cycling":
+            return self.bike_elevation_gain_ft
+        else:
+            # For mixed or unknown, return the larger of the two
+            return max(self.bike_elevation_gain_ft, self.run_elevation_gain_ft)

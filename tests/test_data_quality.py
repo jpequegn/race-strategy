@@ -6,19 +6,20 @@ Tests the DataValidator class and ensures accurate detection of data quality iss
 in GPS course data before use in race strategy generation.
 """
 
-import pytest
-import tempfile
 import os
+import tempfile
 from unittest.mock import Mock
 
+import pytest
+
+from src.models.course import ClimbSegment, CourseProfile, GPSMetadata, GPSPoint
 from src.utils.data_validator import (
-    DataValidator,
     DataQualityReport,
+    DataValidator,
     ValidationResult,
     generate_quality_report_summary,
 )
 from src.utils.gps_parser import GPSParser
-from src.models.course import CourseProfile, ClimbSegment, GPSPoint, GPSMetadata
 
 
 class TestDataValidator:

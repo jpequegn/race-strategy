@@ -1,14 +1,15 @@
 # tests/integration/test_gps_integration.py
-import pytest
-import tempfile
 import os
+import tempfile
 from unittest.mock import patch
 
-from src.utils.gps_parser import GPSParser
-from src.models.course import CourseProfile
-from src.pipelines.core_strategy import RaceStrategyPipeline
+import pytest
+
 from src.models.athlete import AthleteProfile
 from src.models.conditions import RaceConditions
+from src.models.course import CourseProfile
+from src.pipelines.core_strategy import RaceStrategyPipeline
+from src.utils.gps_parser import GPSParser
 
 
 class TestGPSIntegration:

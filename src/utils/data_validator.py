@@ -6,12 +6,11 @@ Ensures GPS course data is accurate and complete before use in race strategy gen
 Validates elevation profiles, gradient calculations, climb detection, and overall data quality.
 """
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Tuple, Any
-from statistics import mean, stdev
 import logging
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
 
-from ..models.course import CourseProfile, ClimbSegment, GPSPoint
+from ..models.course import CourseProfile
 
 logger = logging.getLogger(__name__)
 
@@ -614,14 +613,14 @@ def generate_quality_report_summary(report: DataQualityReport) -> str:
         "=" * 60,
         f"Overall Score: {report.overall_score:.1f}/100 ({report.quality_rating})",
         f"Validation Status: {'✅ VALID' if report.is_valid_for_strategy else '❌ INVALID'} for race strategy",
-        f"",
-        f"Results Summary:",
+        "",
+        "Results Summary:",
         f"  • Total Checks: {report.total_checks}",
         f"  • Passed: {report.passed_checks}",
         f"  • Critical Failures: {report.critical_failures}",
         f"  • Warnings: {report.warnings}",
-        f"",
-        f"Detailed Results:",
+        "",
+        "Detailed Results:",
     ]
 
     for result in report.validation_results:

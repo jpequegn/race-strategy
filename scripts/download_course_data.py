@@ -6,18 +6,19 @@ This script downloads GPS track data from Ride with GPS and converts it
 to course JSON format for the race strategy optimizer.
 """
 
-import sys
-import os
-import requests
 import json
+import os
+import sys
 import tempfile
 from pathlib import Path
+
+import requests
 
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from src.utils.gps_parser import GPSParser
 from src.models.course import CourseProfile
+from src.utils.gps_parser import GPSParser
 
 
 def download_gpx_from_ridewithgps(route_id: str, output_path: str = None) -> str:
@@ -316,7 +317,7 @@ def main():
         save_course_json(course_dict, str(json_output))
 
         # Step 5: Verification
-        print(f"\n✅ SUCCESS! Happy Valley 70.3 course data processed!")
+        print("\n✅ SUCCESS! Happy Valley 70.3 course data processed!")
         print(f"   Course Name: {course_dict['name']}")
         print(f"   Distance: {course_dict['bike_distance_miles']:.1f} miles")
         print(f"   Elevation Gain: {course_dict['bike_elevation_gain_ft']} ft")
@@ -331,7 +332,7 @@ def main():
             if c["start_mile"] >= 35 and c["start_mile"] <= 42
         ]
 
-        print(f"\n🔎 Verification against known characteristics:")
+        print("\n🔎 Verification against known characteristics:")
         print(
             f"   Expected ~3,500ft elevation gain: {elevation_gain} ft ({'✅' if 3000 <= elevation_gain <= 4000 else '⚠️'})"
         )

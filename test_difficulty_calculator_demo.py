@@ -8,8 +8,8 @@ import sys
 
 sys.path.append(".")
 
-from src.utils.course_loader import load_alpe_dhuez_real, load_happy_valley_70_3_gps
 from src.utils.course_analyzer import DifficultyCalculator
+from src.utils.course_loader import load_alpe_dhuez_real, load_happy_valley_70_3_gps
 
 
 def print_difficulty_analysis(course_name, metrics):
@@ -30,7 +30,7 @@ def print_difficulty_analysis(course_name, metrics):
     print(f"   {metrics.difficulty_justification}")
 
     # Key Metrics
-    print(f"\n📈 KEY METRICS:")
+    print("\n📈 KEY METRICS:")
     print(f"   • Elevation Intensity: {metrics.elevation_intensity:.1f} ft/mile")
     print(f"   • Average Gradient: {metrics.avg_gradient:.1f}%")
     print(f"   • Maximum Gradient: {metrics.max_gradient:.1f}%")
@@ -41,7 +41,7 @@ def print_difficulty_analysis(course_name, metrics):
     print(f"   • Technical Difficulty: {metrics.technical_difficulty:.2f} (0-1 scale)")
 
     # Crux Segments
-    print(f"\n🎯 CRUX SEGMENTS (where races are won/lost):")
+    print("\n🎯 CRUX SEGMENTS (where races are won/lost):")
     for i, segment in enumerate(metrics.crux_segments, 1):
         print(f"\n   {i}. {segment['name']} - Mile {segment['start_mile']:.1f}")
         print(f"      • Length: {segment['length_miles']:.1f} miles")
@@ -53,7 +53,7 @@ def print_difficulty_analysis(course_name, metrics):
         print(f"      • {segment['strategic_importance']}")
 
     # Strategic Insights
-    print(f"\n💡 STRATEGIC INSIGHTS:")
+    print("\n💡 STRATEGIC INSIGHTS:")
     for insight in metrics.strategic_insights:
         print(f"   • {insight}")
 
@@ -61,7 +61,7 @@ def print_difficulty_analysis(course_name, metrics):
 def print_course_comparison(comparison):
     """Pretty print course comparison results."""
     print(f"\n{'=' * 70}")
-    print(f"⚖️  COURSE COMPARISON")
+    print("⚖️  COURSE COMPARISON")
     print(f"{'=' * 70}")
 
     print(f"\nComparing: {comparison['course1_name']} vs {comparison['course2_name']}")
@@ -69,14 +69,14 @@ def print_course_comparison(comparison):
     # Winner
     diff = abs(comparison["difficulty_difference"])
     if diff < 0.5:
-        print(f"✅ Result: Courses are similarly difficult")
+        print("✅ Result: Courses are similarly difficult")
     else:
         print(
             f"✅ Result: {comparison['harder_course']} is harder by {diff:.1f} points"
         )
 
     # Metrics Comparison
-    print(f"\n📊 METRICS COMPARISON:")
+    print("\n📊 METRICS COMPARISON:")
     for metric, values in comparison["metrics_comparison"].items():
         metric_name = metric.replace("_", " ").title()
         print(f"\n   {metric_name}:")
@@ -85,7 +85,7 @@ def print_course_comparison(comparison):
             print(f"   {emoji} {course}: {value}")
 
     # Key Differences
-    print(f"\n🔍 KEY DIFFERENCES:")
+    print("\n🔍 KEY DIFFERENCES:")
     for difference in comparison["key_differences"]:
         print(f"   • {difference}")
 
@@ -162,12 +162,12 @@ def main():
             )
 
             if ad_metrics.overall_rating > hv_metrics.overall_rating:
-                print(f"   • Alpe d'Huez is significantly more difficult")
+                print("   • Alpe d'Huez is significantly more difficult")
                 print(
-                    f"   • Main factors: Higher elevation intensity, altitude effects, steeper gradients"
+                    "   • Main factors: Higher elevation intensity, altitude effects, steeper gradients"
                 )
             else:
-                print(f"   • Courses have similar difficulty levels")
+                print("   • Courses have similar difficulty levels")
     except:
         pass
 

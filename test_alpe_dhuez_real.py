@@ -29,7 +29,7 @@ def main():
         print(f"📍 Base Altitude: {course.altitude_ft:,} ft")
 
         # Test the 4 major climbs
-        print(f"\n2️⃣  FOUR MAJOR CLIMBS VERIFICATION")
+        print("\n2️⃣  FOUR MAJOR CLIMBS VERIFICATION")
         print("-" * 30)
 
         print(f"🧗 Total Key Climbs: {len(course.key_climbs)}")
@@ -50,7 +50,7 @@ def main():
             print(f"   ❌ Expected 4 climbs, found {len(course.key_climbs)}")
 
         # Test 21-bend Alpe d'Huez technical section
-        print(f"\n3️⃣  21-BEND ALPE D'HUEZ VERIFICATION")
+        print("\n3️⃣  21-BEND ALPE D'HUEZ VERIFICATION")
         print("-" * 35)
 
         alpe_sections = [
@@ -70,7 +70,7 @@ def main():
                 print(f"      {section}")
 
         # Test altitude effects
-        print(f"\n4️⃣  ALTITUDE EFFECTS VERIFICATION")
+        print("\n4️⃣  ALTITUDE EFFECTS VERIFICATION")
         print("-" * 30)
 
         if course.altitude_effects:
@@ -87,7 +87,7 @@ def main():
             print("   ❌ Altitude effects not found")
 
         # Test specific climb verification (Alpe d'Huez final ascent)
-        print(f"\n5️⃣  ALPE D'HUEZ FINAL ASCENT VERIFICATION")
+        print("\n5️⃣  ALPE D'HUEZ FINAL ASCENT VERIFICATION")
         print("-" * 40)
 
         final_climb = None
@@ -114,7 +114,7 @@ def main():
         else:
             print("   ❌ Alpe d'Huez Final Ascent (21 Bends) not found")
 
-        print(f"\n" + "=" * 65)
+        print("\n" + "=" * 65)
         print("🎉 Testing complete! Alpe d'Huez Real course integration verified.")
 
     except Exception as e:

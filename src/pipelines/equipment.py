@@ -5,18 +5,20 @@ Integrates equipment database analysis with DSPy AI reasoning to generate
 comprehensive equipment recommendations based on course, conditions, and athlete profile.
 """
 
-import dspy
 from typing import Optional, Tuple
+
+import dspy
+
 from ..models.athlete import AthleteProfile
 from ..models.conditions import RaceConditions
 from ..models.course import CourseProfile
 from ..models.equipment import (
-    EquipmentRecommendations,
-    BikeSetup,
-    SwimGear,
-    RunEquipment,
     AccessoryRecommendations,
+    BikeSetup,
+    EquipmentRecommendations,
     PerformanceImpact,
+    RunEquipment,
+    SwimGear,
 )
 from ..utils.equipment_database import EquipmentDatabase
 from .signatures import EquipmentStrategy
@@ -122,10 +124,10 @@ Recommended Shoes: {shoes}
 Rationale: {shoe_rationale}
 
 COURSE DEMANDS:
-Course Type: {course_analysis['course_type']}
-Climbing Demand: {course_analysis['climbing_demand']}
-Technical Level: {course_analysis['technical_level']}
-Elevation per Mile: {course_analysis['elevation_per_mile']} ft/mile
+Course Type: {course_analysis["course_type"]}
+Climbing Demand: {course_analysis["climbing_demand"]}
+Technical Level: {course_analysis["technical_level"]}
+Elevation per Mile: {course_analysis["elevation_per_mile"]} ft/mile
 
 PERFORMANCE IMPACT:
 Estimated Time Savings: {time_savings}
@@ -166,10 +168,10 @@ Experience: {athlete.experience_level}
 FTP: {athlete.ftp_watts} watts
 Weight: {athlete.weight_lbs} lbs
 Age: {athlete.age}
-Strengths: {', '.join(athlete.strengths)}
-Limiters: {', '.join(athlete.limiters)}
-Target Time: {athlete.target_finish_time or 'Not specified'}
-Previous 70.3 Time: {athlete.previous_70_3_time or 'Not specified'}
+Strengths: {", ".join(athlete.strengths)}
+Limiters: {", ".join(athlete.limiters)}
+Target Time: {athlete.target_finish_time or "Not specified"}
+Previous 70.3 Time: {athlete.previous_70_3_time or "Not specified"}
 """
 
     def _structure_equipment_recommendations(

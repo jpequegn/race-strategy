@@ -6,17 +6,17 @@ This script processes a library of GPX files and converts them to standardized
 course JSON format for the race strategy optimizer.
 """
 
-import sys
-import os
 import json
+import os
+import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from src.utils.gps_parser import GPSParser
 from src.models.course import CourseProfile
+from src.utils.gps_parser import GPSParser
 
 
 def get_course_info(gpx_filename: str) -> Dict[str, str]:
@@ -234,7 +234,7 @@ def process_gpx_library(data_dir: str = None, output_dir: str = None) -> List[st
         Path(output_dir) if output_dir else project_root / "src" / "data" / "courses"
     )
 
-    print(f"🚴‍♂️ GPX Library Processor")
+    print("🚴‍♂️ GPX Library Processor")
     print("=" * 40)
     print(f"📂 Data directory: {data_path}")
     print(f"💾 Output directory: {output_path}")
@@ -263,13 +263,13 @@ def process_gpx_library(data_dir: str = None, output_dir: str = None) -> List[st
             failed += 1
 
     # Summary
-    print(f"\n📊 Processing Summary:")
+    print("\n📊 Processing Summary:")
     print(f"   ✅ Successful: {successful}")
     print(f"   ❌ Failed: {failed}")
     print(f"   📁 Course JSON files created: {len(processed_courses)}")
 
     if processed_courses:
-        print(f"\n🎯 Available courses:")
+        print("\n🎯 Available courses:")
         for course in processed_courses:
             print(f"   - {course}")
 
@@ -287,7 +287,7 @@ def main():
             for course in processed_courses:
                 print(f"   load_course_from_json('{course}')")
         else:
-            print(f"\n💥 No courses were processed successfully")
+            print("\n💥 No courses were processed successfully")
             return 1
 
     except Exception as e:

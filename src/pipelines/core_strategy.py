@@ -394,14 +394,14 @@ Calculated Nutrition Requirements:
 • Sodium Target: {sodium_per_hour}mg/hour
 
 Hourly Schedule:
-• Carbs by hour: {schedule['carbs']}
-• Fluids by hour: {schedule['fluids']} oz
-• Sodium by hour: {schedule['sodium']} mg
+• Carbs by hour: {schedule["carbs"]}
+• Fluids by hour: {schedule["fluids"]} oz
+• Sodium by hour: {schedule["sodium"]} mg
 
 Environmental Considerations:
-• Heat Risk: {env_risks.get('heat', 'Not assessed')}
-• Humidity Impact: {env_risks.get('humidity', 'Not assessed')}
-{f"• Cold Weather: {env_risks['cold']}" if 'cold' in env_risks else ''}
+• Heat Risk: {env_risks.get("heat", "Not assessed")}
+• Humidity Impact: {env_risks.get("humidity", "Not assessed")}
+{f"• Cold Weather: {env_risks['cold']}" if "cold" in env_risks else ""}
 """
 
     def _format_athlete_nutrition_profile(self, athlete: AthleteProfile) -> str:
@@ -410,10 +410,10 @@ Environmental Considerations:
 Athlete: {athlete.name}
 Weight: {athlete.weight_lbs} lbs
 Experience Level: {athlete.experience_level}
-Previous 70.3 Time: {athlete.previous_70_3_time or 'First time'}
-Known Strengths: {', '.join(athlete.strengths)}
-Known Limiters: {', '.join(athlete.limiters)}
-Target Finish Time: {athlete.target_finish_time or 'Sub 6:00:00'}
+Previous 70.3 Time: {athlete.previous_70_3_time or "First time"}
+Known Strengths: {", ".join(athlete.strengths)}
+Known Limiters: {", ".join(athlete.limiters)}
+Target Finish Time: {athlete.target_finish_time or "Sub 6:00:00"}
 
 Nutrition Considerations:
 • Body weight crucial for sweat rate calculations

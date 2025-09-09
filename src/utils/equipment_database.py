@@ -5,8 +5,9 @@ Provides equipment catalog, decision matrices, and cost-benefit analysis
 for triathlon equipment selection based on course, conditions, and athlete profile.
 """
 
-from typing import Dict, List, Tuple, Optional
 import logging
+from typing import Dict, List, Optional, Tuple
+
 from ..models.athlete import AthleteProfile
 from ..models.conditions import RaceConditions
 from ..models.course import CourseProfile

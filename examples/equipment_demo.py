@@ -15,9 +15,9 @@ from src.utils.equipment_database import EquipmentDatabase
 
 def print_section_header(title):
     """Print a formatted section header"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"{title.center(60)}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
 
 def print_subsection(title):
