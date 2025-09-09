@@ -20,7 +20,7 @@ class BikeSetup:
     position: str  # "aggressive", "moderate", "comfort", "time-trial"
     position_rationale: str  # Position adjustment reasoning
     tire_pressure: Optional[str] = None  # Pressure recommendations
-    accessories: List[str] = None  # Additional bike accessories
+    accessories: Optional[List[str]] = None  # Additional bike accessories
 
 
 @dataclass
@@ -29,11 +29,11 @@ class SwimGear:
 
     wetsuit_decision: str  # "wetsuit", "no-wetsuit", "depends-on-temp"
     wetsuit_rationale: str  # Why wetsuit/no-wetsuit decision
-    wetsuit_type: Optional[str] = None  # "full", "sleeveless", "shorty" if wetsuit
     goggles: str  # "clear", "tinted", "mirrored", "photochromic"
     goggle_rationale: str  # Why these goggles
+    wetsuit_type: Optional[str] = None  # "full", "sleeveless", "shorty" if wetsuit
     cap_strategy: Optional[str] = None  # Swimming cap considerations
-    accessories: List[str] = None  # Additional swim accessories
+    accessories: Optional[List[str]] = None  # Additional swim accessories
 
 
 @dataclass
@@ -44,7 +44,7 @@ class RunEquipment:
     shoe_rationale: str  # Why this shoe category
     clothing: str  # Weather-appropriate clothing recommendations
     clothing_rationale: str  # Why this clothing choice
-    accessories: List[str] = None  # Additional run accessories
+    accessories: Optional[List[str]] = None  # Additional run accessories
     fuel_carrying: Optional[str] = None  # How to carry nutrition
 
 
@@ -55,7 +55,7 @@ class AccessoryRecommendations:
     nutrition_storage: List[str]  # How to carry fuel and hydration
     tools_spares: List[str]  # Essential bike tools and spare parts
     electronics: List[str]  # GPS, power meter considerations
-    other_gear: List[str] = None  # Other helpful accessories
+    other_gear: Optional[List[str]] = None  # Other helpful accessories
 
 
 @dataclass
@@ -81,7 +81,7 @@ class EquipmentRecommendations:
     run_equipment: RunEquipment
     accessories: AccessoryRecommendations
     performance_impact: PerformanceImpact
-    
+
     # Meta information
     confidence_level: str = "high"  # "low", "medium", "high"
     last_updated: Optional[str] = None
@@ -102,6 +102,6 @@ class EquipmentItem:
     performance_rating: Optional[float] = None  # 1.0-10.0 scale
     conditions_rating: Optional[str] = None  # Best conditions for this item
     athlete_suitability: Optional[str] = None  # What type of athlete benefits most
-    pros: List[str] = None
-    cons: List[str] = None
+    pros: Optional[List[str]] = None
+    cons: Optional[List[str]] = None
     specifications: Optional[str] = None  # Technical specifications

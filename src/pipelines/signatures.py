@@ -196,7 +196,9 @@ class StrategyOptimizer(dspy.Signature):
     pacing_strategy: str = dspy.InputField()
     risk_assessment: str = dspy.InputField()
     nutrition_strategy: str = dspy.InputField(desc="Hydration and fueling plan")
-    equipment_strategy: str = dspy.InputField(desc="Equipment recommendations and setup")
+    equipment_strategy: str = dspy.InputField(
+        desc="Equipment recommendations and setup"
+    )
     target_time: str = dspy.InputField(desc="Athlete's target finish time")
 
     final_strategy: str = dspy.OutputField(desc="Complete race execution plan")

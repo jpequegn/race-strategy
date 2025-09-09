@@ -183,19 +183,23 @@ Previous 70.3 Time: {athlete.previous_70_3_time or 'Not specified'}
         """Structure the final equipment recommendations"""
 
         # Extract technical recommendations for fallback
-        gearing, _ = self.equipment_db.recommend_bike_gearing(course, athlete, conditions)
+        gearing, _ = self.equipment_db.recommend_bike_gearing(
+            course, athlete, conditions
+        )
         wheels, _ = self.equipment_db.recommend_wheels(course, conditions)
-        wetsuit_decision, wetsuit_type, _ = self.equipment_db.recommend_wetsuit_decision(
-            conditions, athlete
+        wetsuit_decision, wetsuit_type, _ = (
+            self.equipment_db.recommend_wetsuit_decision(conditions, athlete)
         )
         shoes, _ = self.equipment_db.recommend_running_shoes(course, athlete)
 
         # Bike setup
         bike_setup = BikeSetup(
             gearing=gearing,
-            gearing_rationale=ai_recommendations.bike_setup.split("Position:")[0].strip()
-            if "Position:" in ai_recommendations.bike_setup
-            else ai_recommendations.bike_setup[:200],
+            gearing_rationale=(
+                ai_recommendations.bike_setup.split("Position:")[0].strip()
+                if "Position:" in ai_recommendations.bike_setup
+                else ai_recommendations.bike_setup[:200]
+            ),
             wheels=wheels,
             wheel_rationale=f"Optimal for course conditions and {conditions.wind_speed_mph} mph wind",
             position="moderate",
@@ -237,13 +241,17 @@ Previous 70.3 Time: {athlete.previous_70_3_time or 'Not specified'}
             "wheels": wheels,
             "wetsuit_decision": wetsuit_decision,
         }
-        time_savings = self.equipment_db.estimate_time_savings(equipment_changes, course)
+        time_savings = self.equipment_db.estimate_time_savings(
+            equipment_changes, course
+        )
 
         performance_impact = PerformanceImpact(
             time_savings_estimate=time_savings,
-            cost_analysis=ai_recommendations.performance_impact[:300]
-            if hasattr(ai_recommendations, "performance_impact")
-            else "Cost varies by specific equipment choices",
+            cost_analysis=(
+                ai_recommendations.performance_impact[:300]
+                if hasattr(ai_recommendations, "performance_impact")
+                else "Cost varies by specific equipment choices"
+            ),
             priority_ranking=[
                 "Proper gearing for course",
                 "Appropriate wheels",

@@ -104,13 +104,15 @@ class RaceStrategyPipeline:
         )
 
         # Step 7: Generate equipment recommendations with integration to pacing
-        equipment_recommendations = self.equipment_pipeline.generate_equipment_recommendations(
-            course=course,
-            athlete=athlete,
-            conditions=conditions,
-            pacing_strategy=f"Swim: {pacing_strategy.swim_strategy}\n"
-            f"Bike: {pacing_strategy.bike_strategy}\n"
-            f"Run: {pacing_strategy.run_strategy}",
+        equipment_recommendations = (
+            self.equipment_pipeline.generate_equipment_recommendations(
+                course=course,
+                athlete=athlete,
+                conditions=conditions,
+                pacing_strategy=f"Swim: {pacing_strategy.swim_strategy}\n"
+                f"Bike: {pacing_strategy.bike_strategy}\n"
+                f"Run: {pacing_strategy.run_strategy}",
+            )
         )
 
         # Step 8: Assess risks with enhanced analysis, nutrition, and equipment considerations

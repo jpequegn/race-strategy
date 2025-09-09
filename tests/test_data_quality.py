@@ -98,9 +98,9 @@ class TestDataValidator:
 
         return CourseProfile(
             name=name,
-            bike_distance_miles=10000.0
-            if include_issues
-            else distance,  # Extreme distance if issues
+            bike_distance_miles=(
+                10000.0 if include_issues else distance
+            ),  # Extreme distance if issues
             bike_elevation_gain_ft=elevation_gain,
             swim_distance_miles=1.2,
             run_distance_miles=13.1,

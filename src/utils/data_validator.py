@@ -536,9 +536,11 @@ class DataValidator:
                         details={
                             "climb_total": climb_total_gain,
                             "course_total": course_total_gain,
-                            "ratio": climb_total_gain / course_total_gain
-                            if course_total_gain > 0
-                            else float("inf"),
+                            "ratio": (
+                                climb_total_gain / course_total_gain
+                                if course_total_gain > 0
+                                else float("inf")
+                            ),
                         },
                         suggested_fix="Review climb detection algorithm or elevation calculations",
                     )
