@@ -5,7 +5,7 @@ Comprehensive tests for the course difficulty calculator.
 
 import pytest
 
-from src.models.course import CourseProfile, ClimbSegment
+from src.models.course import ClimbSegment, CourseProfile
 from src.utils.course_analyzer import DifficultyCalculator
 from src.utils.course_loader import (
     load_alpe_dhuez_real,

@@ -3,15 +3,16 @@ Unit tests for Enhanced DSPy Course Analysis (Issue #13)
 Tests the enhanced DSPy signatures and pipeline integration with DifficultyCalculator
 """
 
-import pytest
-from unittest.mock import Mock, MagicMock, patch
-import dspy
+from unittest.mock import MagicMock, Mock, patch
 
-from src.pipelines.signatures import EnhancedCourseAnalyzer, SegmentAnalyzer
-from src.pipelines.core_strategy import RaceStrategyPipeline
-from src.models.course import CourseProfile, ClimbSegment
+import dspy
+import pytest
+
 from src.models.athlete import AthleteProfile
 from src.models.conditions import RaceConditions
+from src.models.course import ClimbSegment, CourseProfile
+from src.pipelines.core_strategy import RaceStrategyPipeline
+from src.pipelines.signatures import EnhancedCourseAnalyzer, SegmentAnalyzer
 
 
 class TestEnhancedCourseAnalyzer:

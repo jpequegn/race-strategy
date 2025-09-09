@@ -18,16 +18,16 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.models.athlete import AthleteProfile
 from src.models.conditions import RaceConditions
-from src.utils.nutrition_calculator import NutritionCalculator
 from src.pipelines.core_strategy import RaceStrategyPipeline
 from src.utils.course_loader import load_happy_valley_70_3_gps
+from src.utils.nutrition_calculator import NutritionCalculator
 
 
 def print_header(title: str):
     """Print a formatted header"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"  {title}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
 
 def print_section(title: str, content: str):
@@ -159,12 +159,12 @@ Cool Conditions:
         f"""
 Hour | Carbs (g) | Fluids (oz) | Sodium (mg)
 -----|-----------|-------------|-------------
-  1  |    {hot_schedule['carbs'][0]:2d}     |     {hot_schedule['fluids'][0]:2d}      |     {hot_schedule['sodium'][0]:3d}
-  2  |    {hot_schedule['carbs'][1]:2d}     |     {hot_schedule['fluids'][1]:2d}      |     {hot_schedule['sodium'][1]:3d}
-  3  |    {hot_schedule['carbs'][2]:2d}     |     {hot_schedule['fluids'][2]:2d}      |     {hot_schedule['sodium'][2]:3d}
-  4  |    {hot_schedule['carbs'][3]:2d}     |     {hot_schedule['fluids'][3]:2d}      |     {hot_schedule['sodium'][3]:3d}
-  5  |    {hot_schedule['carbs'][4]:2d}     |     {hot_schedule['fluids'][4]:2d}      |     {hot_schedule['sodium'][4]:3d}
-  6  |    {hot_schedule['carbs'][5]:2d}     |     {hot_schedule['fluids'][5]:2d}      |     {hot_schedule['sodium'][5]:3d}
+  1  |    {hot_schedule["carbs"][0]:2d}     |     {hot_schedule["fluids"][0]:2d}      |     {hot_schedule["sodium"][0]:3d}
+  2  |    {hot_schedule["carbs"][1]:2d}     |     {hot_schedule["fluids"][1]:2d}      |     {hot_schedule["sodium"][1]:3d}
+  3  |    {hot_schedule["carbs"][2]:2d}     |     {hot_schedule["fluids"][2]:2d}      |     {hot_schedule["sodium"][2]:3d}
+  4  |    {hot_schedule["carbs"][3]:2d}     |     {hot_schedule["fluids"][3]:2d}      |     {hot_schedule["sodium"][3]:3d}
+  5  |    {hot_schedule["carbs"][4]:2d}     |     {hot_schedule["fluids"][4]:2d}      |     {hot_schedule["sodium"][4]:3d}
+  6  |    {hot_schedule["carbs"][5]:2d}     |     {hot_schedule["fluids"][5]:2d}      |     {hot_schedule["sodium"][5]:3d}
 
 Notes:
 - Hour 1 is reduced due to race start nerves
@@ -181,12 +181,12 @@ Notes:
         "ENVIRONMENTAL RISK ASSESSMENT",
         f"""
 Hot Day Risks:
-  Heat Risk: {hot_risks['heat']}
-  Humidity Risk: {hot_risks['humidity']}
+  Heat Risk: {hot_risks["heat"]}
+  Humidity Risk: {hot_risks["humidity"]}
 
 Cool Day Risks:
-  Heat Risk: {cool_risks['heat']}
-  Humidity Risk: {cool_risks['humidity']}
+  Heat Risk: {cool_risks["heat"]}
+  Humidity Risk: {cool_risks["humidity"]}
 """,
     )
 
@@ -288,8 +288,8 @@ Sodium Target: {sodium_per_hour}mg/hour
             "RACE-SPECIFIC RECOMMENDATIONS",
             f"""
 Environmental Challenges:
-  {env_risks['heat']}
-  {env_risks['humidity']}
+  {env_risks["heat"]}
+  {env_risks["humidity"]}
 
 Pacing Integration:
   • Pre-cool before race start (ice vest, cold fluids)
@@ -318,13 +318,13 @@ Swim (0-1 hours):
   • Prepare for T1 nutrition start
 
 Bike Hours 1-3:
-  Hour 1: {schedule['carbs'][0]}g carbs, {schedule['fluids'][0]} oz fluid, {schedule['sodium'][0]}mg sodium
-  Hour 2: {schedule['carbs'][1]}g carbs, {schedule['fluids'][1]} oz fluid, {schedule['sodium'][1]}mg sodium
-  Hour 3: {schedule['carbs'][2]}g carbs, {schedule['fluids'][2]} oz fluid, {schedule['sodium'][2]}mg sodium
+  Hour 1: {schedule["carbs"][0]}g carbs, {schedule["fluids"][0]} oz fluid, {schedule["sodium"][0]}mg sodium
+  Hour 2: {schedule["carbs"][1]}g carbs, {schedule["fluids"][1]} oz fluid, {schedule["sodium"][1]}mg sodium
+  Hour 3: {schedule["carbs"][2]}g carbs, {schedule["fluids"][2]} oz fluid, {schedule["sodium"][2]}mg sodium
 
 Run Hours 4-5:
-  Hour 4: {schedule['carbs'][3]}g carbs, {schedule['fluids'][3]} oz fluid, {schedule['sodium'][3]}mg sodium
-  Hour 5: {schedule['carbs'][4]}g carbs, {schedule['fluids'][4]} oz fluid (final hour to finish)
+  Hour 4: {schedule["carbs"][3]}g carbs, {schedule["fluids"][3]} oz fluid, {schedule["sodium"][3]}mg sodium
+  Hour 5: {schedule["carbs"][4]}g carbs, {schedule["fluids"][4]} oz fluid (final hour to finish)
 
 Hot Weather Adjustments:
   • Increase fluid intake by 10-15% if sweating heavily
@@ -336,7 +336,7 @@ Hot Weather Adjustments:
 
         print_section(
             "CONTINGENCY PLANS",
-            f"""
+            """
 IF Overheating:
   • Reduce pace 5-10%
   • Increase cooling strategies (ice, water)

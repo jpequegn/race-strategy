@@ -5,8 +5,9 @@ Provides evidence-based calculations for hydration, fueling, and electrolyte nee
 based on athlete physiology, race duration, and environmental conditions.
 """
 
-from typing import Tuple, Dict, List
 import math
+from typing import Dict, List, Tuple
+
 from ..models.athlete import AthleteProfile
 from ..models.conditions import RaceConditions
 

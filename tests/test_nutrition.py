@@ -9,11 +9,11 @@ for triathlon race nutrition planning.
 from src.models.athlete import AthleteProfile
 from src.models.conditions import RaceConditions
 from src.models.nutrition import (
-    NutritionItem,
-    HydrationPlan,
-    FuelingSchedule,
-    ElectrolyteStrategy,
     ContingencyNutrition,
+    ElectrolyteStrategy,
+    FuelingSchedule,
+    HydrationPlan,
+    NutritionItem,
     NutritionPlan,
 )
 from src.utils.nutrition_calculator import NutritionCalculator
@@ -254,7 +254,10 @@ class TestNutritionCalculator:
         """Test generation of hour-by-hour nutrition schedule"""
         race_duration = 5.5  # hours
         schedule = self.calculator.generate_hourly_schedule(
-            race_duration, 60, 24, 350  # carbs, fluid, sodium per hour
+            race_duration,
+            60,
+            24,
+            350,  # carbs, fluid, sodium per hour
         )
 
         assert "carbs" in schedule

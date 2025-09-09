@@ -9,16 +9,16 @@ from src.models.athlete import AthleteProfile
 from src.models.conditions import RaceConditions
 from src.models.course import CourseProfile
 from src.models.equipment import (
-    BikeSetup,
-    SwimGear,
-    RunEquipment,
     AccessoryRecommendations,
-    PerformanceImpact,
-    EquipmentRecommendations,
+    BikeSetup,
     EquipmentItem,
+    EquipmentRecommendations,
+    PerformanceImpact,
+    RunEquipment,
+    SwimGear,
 )
-from src.utils.equipment_database import EquipmentDatabase
 from src.pipelines.equipment import EquipmentPipeline
+from src.utils.equipment_database import EquipmentDatabase
 
 
 class TestEquipmentModels:
@@ -684,7 +684,9 @@ class TestEquipmentPipeline:
         flat_course = CourseProfile("Flat Test", 56, 500, 1.2, 13.1, 100, [], [], 0)
 
         advanced_recs = self.pipeline.generate_equipment_recommendations(
-            flat_course, self.athlete, self.conditions  # self.athlete is advanced
+            flat_course,
+            self.athlete,
+            self.conditions,  # self.athlete is advanced
         )
         assert advanced_recs.bike_setup.position == "aggressive"
         assert "aggressive" in advanced_recs.bike_setup.position_rationale.lower()

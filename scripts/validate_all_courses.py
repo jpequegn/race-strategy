@@ -20,18 +20,17 @@ Options:
 """
 
 import argparse
+import datetime
 import json
 import sys
 from pathlib import Path
-from typing import List, Dict, Tuple, Optional
-import datetime
+from typing import Dict, List, Optional, Tuple
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.utils.data_validator import DataQualityReport, DataValidator
 from src.utils.gps_parser import GPSParser, GPSParserConfig
-from src.utils.data_validator import DataValidator, DataQualityReport
-from src.models.course import CourseProfile
 
 
 class CourseValidationRunner:
@@ -96,13 +95,13 @@ class CourseValidationRunner:
         """Validate a JSON course file and return its quality report."""
         try:
             from src.utils.course_loader import load_course_from_json
-            
+
             # Use the proper course loader to handle elevation profile conversion
             # Pass just the course name without extension and the directory
             course_name = json_path.stem  # filename without extension
             data_dir = str(json_path.parent)  # directory path
             course = load_course_from_json(course_name, data_dir)
-            
+
             report = self.validator.validate_course(course)
             return course.name, report
 
